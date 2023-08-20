@@ -1,51 +1,70 @@
+
+
+
+
+
 #define DEBUG true      // change to false to stop Serial output if you use a display such as LED or LCD
+
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
-#include <TM1637Display.h>
-// select which pin will trigger the configuration portal when set to LOW
-#define TRIGGER_PIN 0
-#define CLK 21
-#define DIO 20
+#include <TM1637Display.h>//https://github.com/avishorp/TM1637/tree/master
 #include <string.h>
 #include <stdint.h>
-char ntpip[40] = {'0','0','0','0','0','0','0','0','0','0',
-                  '0','0','0','0','0','0','0','0','0','0',
-                  '0','0','0','0','0','0','0','0','0','0',
-                  '0','0','0','0','0','0','0','0','0','0'};
-
-WiFiManagerParameter custom_ntpip("ntpipadd","ntp ip add",ntpip,40);
-WiFiManager wm;
-
-uint16_t displayData[16];
-unsigned int  timeout   = 120; // seconds to run for
-unsigned int  startTime = millis();
-bool portalRunning      = false;
-bool startAP            = true; // start AP and webserver if true, else start only webserver
-
 #include <TimeLib.h>    // https://github.com/PaulStoffregen/Time
 #include <Timezone.h>   // https://github.com/JChristensen/Timezone
 #include <DS3232RTC.h>  // https://github.com/JChristensen/DS3232RTC
 #include <Streaming.h>  // https://github.com/geneReeves/ArduinoStreaming
-
 #include <SPI.h>
-TM1637Display display(CLK, DIO);
-DS3232RTC RTC;
-int datacounter = 0;
-/* NETWORK */
 #include <WiFi.h>
 #include <WiFiUdp.h>
-WiFiUDP ntpClient;
-// RTC interrupt config
+
+#define TRIGGER_PIN 0
+#define CLK 21
+#define DIO 20
 #define RTC_INTERRUPT_PIN 9 // interrupt on GPIO 12
 #define LATCHPIN 14
 #define OEPIN 3
+#define VSPI_MISO   MISO
+#define VSPI_MOSI   MOSI
+#define VSPI_SCLK   SCK
+#define VSPI_SS     SS
 
 #define UDP_LISTEN_PORT 8888
 #define VSPI FSPI
-#define VSPI_MISO   MISO
-  #define VSPI_MOSI   MOSI
-  #define VSPI_SCLK   SCK
-  #define VSPI_SS     SS
-  SPIClass * vspi = NULL;
+
+#define BLOCKSY     4
+uint8_t x = 0,y = 0;
+uint16_t displayData[16];
+uint8_t letterA[8] = {
+  0b00010000,
+  0b00010000,
+  0b00101000,
+  0b00101000,
+  0b01000100,
+  0b01111100,
+  0b10000010,
+  0b10000010
+};
+unsigned int  timeout   = 120; // seconds to run for
+unsigned int  startTime = millis();
+bool portalRunning      = false;
+bool startAP            = true; // start AP and webserver if true, else start only webserver
+char ntpip[40] = {'0','0','0','0','0','0','0','0','0','0',
+                  '0','0','0','0','0','0','0','0','0','0',
+                  '0','0','0','0','0','0','0','0','0','0',
+                  '0','0','0','0','0','0','0','0','0','0'};
+int datacounter = 0;
+// ISR variables
+volatile uint32_t sysClock, ntpAlarmCounter; // the actual clock reference & fraction in millis
+volatile bool outputTimestampEnable = false;  // used to trigger output of the current time
+volatile bool halfSec = false;
+
+WiFiManagerParameter custom_ntpip("ntpipadd","ntp ip add",ntpip,40);
+WiFiManager wm;
+TM1637Display display(CLK, DIO);
+DS3232RTC RTC;
+SPIClass * vspi = NULL;
+WiFiUDP ntpClient;
+
 /* TIMEZONE */
 /*
    Pre-defined timezone definition examples. Use only one of these at a time or risk running
@@ -94,10 +113,7 @@ TimeChangeRule *tcr;        //pointer to the time change rule, use to get the TZ
 /* FUNCTIONS AND ISR */
 /*********************/
 
-// ISR variables
-volatile uint32_t sysClock, ntpAlarmCounter; // the actual clock reference & fraction in millis
-volatile bool outputTimestampEnable = false;  // used to trigger output of the current time
-volatile bool halfSec = false;
+
 //volatile uint32_t sysFraction;  // for future development
 
 void ICACHE_RAM_ATTR rtcIntISR(void);
@@ -181,11 +197,41 @@ uint32_t sendNTPrequest(uint8_t index)
   ntpFraction = (uint32_t)((readNtpBuffer(packetBuffer, SVR_TIME_FRAC) * pow(10, 6)) / pow(2 , 32)) / 1000UL;
   return 0;
 }// END OF sendNTPrequest
+void drawPixel(uint8_t x, uint8_t y, uint8_t color) 
+{
+  uint16_t xBlock;
+  uint8_t yHighOrLow;
+  uint16_t mask;
+  uint16_t xPos;
+  yHighOrLow = y % 2;  //if even then result is 0, 0 means the lower
+  xBlock = x / 8;
+  xPos = x % 8;
+  int16_t yTemp;
+  if (color)  //draw
+  {
+    if (yHighOrLow == 0) 
+    {
+      displayData[xBlock + (y / 2) * BLOCKSY] |= 1 << xPos;
+    } else 
+    {
+      displayData[xBlock + (y / 2) * BLOCKSY] |= 1 << (xPos + 8);
+    }
+  } else  //clear
+  {
+    if (yHighOrLow == 0) 
+    {
+      displayData[xBlock + (y / 2) * BLOCKSY] &= ~(1 << xPos);
+    } else 
+    {
+      displayData[xBlock + (y / 2) * BLOCKSY] &= ~(1 << (xPos + 8));
+    }
+  }
+}
 void sendDisplay(void)
 {
-
   digitalWrite(OEPIN, 1);
-  vspi->beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  vspi->beginTransaction(SPISettings(1000000, LSBFIRST, SPI_MODE0));
+
   for(int i = 0;i<16;i++)
   {
     vspi->transfer16(displayData[i]);
@@ -210,7 +256,6 @@ void setup() {
   memset(displayData,0,32);
 #if DEBUG
   Serial.begin(57600);
-  
   Serial << F("A.N.T. Accurate Ntp Time (C) Phil Morris 2018 <www.lydiard.plus.com>") << endl;
 #endif
   
@@ -223,7 +268,7 @@ void setup() {
   wm.setHostname("NARVAL_CLOCK1");
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin("GMPuc6","75000000");
+  WiFi.begin("nemeth_wifi","75000000");
   delay(5000);
   Serial << (F("IP address is ")) << WiFi.localIP() << endl;
 
@@ -359,17 +404,18 @@ void loop() {
     if(halfSec)
     {
         memset(displayData,0x00,32);
-        if(datacounter >= 0)
+        x++;
+        if(x >31)
         {
-          displayData[datacounter] = 0x301;
+          x = 0;
+          y++;
+          if(y >7)
+          {
+            y = 0;
+          }
         }
-        
-        datacounter = datacounter + 1;
-        if(datacounter >15)
-        {
-          datacounter = -4;
-        }
-      Serial.println(datacounter);
+        drawPixel(x, y, 1);
+          
       sendDisplay();
       display.showNumberDecEx(num,0b01000000,false,4,0);
     }
