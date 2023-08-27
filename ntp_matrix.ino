@@ -1,6 +1,273 @@
 
 
+static const uint16_t Font13x16 [] = {
+0b0001111111000000,
+0b0011111111100000,
+0b0111100011110000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0001111111000000,
 
+0b0000000011000000,
+0b0000000111000000,
+0b0000001111000000,
+0b0000011111000000,
+0b0000111111000000,
+0b0001111111000000,
+0b0011111111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000001111000000,
+
+0b0001111111000000,
+0b0011111111100000,
+0b0111100011110000,
+0b1111000001111000,
+0b1111000001111000,
+0b0000000001111000,
+0b0000000011110000,
+0b0000000111100000,
+0b0000001111000000,
+0b0000011110000000,
+0b0000111100000000,
+0b0001111000000000,
+0b0011110000000000,
+0b0111100000000000,
+0b1111111111111111,
+0b1111111111111111,
+
+0b0001111111000000,
+0b0011111111100000,
+0b0111100011110000,
+0b1111000001111000,
+0b1111000001111000,
+0b0000000001111000,
+0b0000000011110000,
+0b0000011111100000,
+0b0000011111100000,
+0b0000000011110000,
+0b0000000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0001111111000000,
+
+0b0000000011100000,
+0b0000000111100000,
+0b0000001111100000,
+0b0000011111100000,
+0b0000111111100000,
+0b0001111111100000,
+0b0011110111100000,
+0b0111100111100000,
+0b1111000111100000,
+0b1111000111100000,
+0b1111111111111000,
+0b1111111111111000,
+0b0000000111100000,
+0b0000000111100000,
+0b0000000111100000,
+0b0000000111100000,
+
+0b1111111111111000,
+0b1111111111111000,
+0b1111000000000000,
+0b1111000000000000,
+0b1111000000000000,
+0b1111000000000000,
+0b1111111111000000,
+0b1111111111100000,
+0b1111000011110000,
+0b0000000001111000,
+0b0000000001111000,
+0b0000000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0001111111000000,
+
+0b0001111111000000,
+0b0011111111100000,
+0b0111100011110000,
+0b1111000001111000,
+0b1111000000000000,
+0b1111000000000000,
+0b1111111111000000,
+0b1111111111100000,
+0b1111100011110000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0001111111000000,
+
+0b1111111111111000,
+0b1111111111111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0000000011110000,
+0b0000000011110000,
+0b0000000111100000,
+0b0000000111100000,
+0b0000001111000000,
+0b0000001111000000,
+0b0000011110000000,
+0b0000011110000000,
+0b0000111100000000,
+0b0000111100000000,
+0b0001111000000000,
+0b0001111000000000,
+
+0b0001111111000000,
+0b0011111111100000,
+0b0111100011110000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0111111111110000,
+0b1111100011111000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0001111111000000,
+
+0b0001111111000000,
+0b0011111111100000,
+0b0111100011110000,
+0b1111000001111000,
+0b1111000001111000,
+0b1111000001111000,
+0b0111100011111000,
+0b0011111111111000,
+0b0001111111111000,
+0b0000000001111000,
+0b0000000001111000,
+0b0000000001111000,
+0b1111000001111000,
+0b0111100011110000,
+0b0011111111100000,
+0b0001111111000000
+};
+static const uint16_t Font7x10 [] = {
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // sp
+0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x1000, 0x0000, 0x0000,  // !
+0x2800, 0x2800, 0x2800, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // "
+0x2400, 0x2400, 0x7C00, 0x2400, 0x4800, 0x7C00, 0x4800, 0x4800, 0x0000, 0x0000,  // #
+0x3800, 0x5400, 0x5000, 0x3800, 0x1400, 0x5400, 0x5400, 0x3800, 0x1000, 0x0000,  // $
+0x2000, 0x5400, 0x5800, 0x3000, 0x2800, 0x5400, 0x1400, 0x0800, 0x0000, 0x0000,  // %
+0x1000, 0x2800, 0x2800, 0x1000, 0x3400, 0x4800, 0x4800, 0x3400, 0x0000, 0x0000,  // &
+0x1000, 0x1000, 0x1000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // '
+0x0800, 0x1000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x1000, 0x0800,  // (
+0x2000, 0x1000, 0x0800, 0x0800, 0x0800, 0x0800, 0x0800, 0x0800, 0x1000, 0x2000,  // )
+0x1000, 0x3800, 0x1000, 0x2800, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // *
+0x0000, 0x0000, 0x1000, 0x1000, 0x7C00, 0x1000, 0x1000, 0x0000, 0x0000, 0x0000,  // +
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1000, 0x1000, 0x1000,  // ,
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x3800, 0x0000, 0x0000, 0x0000, 0x0000,  // -
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1000, 0x0000, 0x0000,  // .
+0x0800, 0x0800, 0x1000, 0x1000, 0x1000, 0x1000, 0x2000, 0x2000, 0x0000, 0x0000,  // /
+0x3800, 0x4400, 0x4400, 0x5400, 0x4400, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // 0
+0x1000, 0x3000, 0x5000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x0000,  // 1
+0x3800, 0x4400, 0x4400, 0x0400, 0x0800, 0x1000, 0x2000, 0x7C00, 0x0000, 0x0000,  // 2
+0x3800, 0x4400, 0x0400, 0x1800, 0x0400, 0x0400, 0x4400, 0x3800, 0x0000, 0x0000,  // 3
+0x0800, 0x1800, 0x2800, 0x2800, 0x4800, 0x7C00, 0x0800, 0x0800, 0x0000, 0x0000,  // 4
+0x7C00, 0x4000, 0x4000, 0x7800, 0x0400, 0x0400, 0x4400, 0x3800, 0x0000, 0x0000,  // 5
+0x3800, 0x4400, 0x4000, 0x7800, 0x4400, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // 6
+0x7C00, 0x0400, 0x0800, 0x1000, 0x1000, 0x2000, 0x2000, 0x2000, 0x0000, 0x0000,  // 7
+0x3800, 0x4400, 0x4400, 0x3800, 0x4400, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // 8
+0x3800, 0x4400, 0x4400, 0x4400, 0x3C00, 0x0400, 0x4400, 0x3800, 0x0000, 0x0000,  // 9
+0x0000, 0x0000, 0x1000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1000, 0x0000, 0x0000,  // :
+0x0000, 0x0000, 0x0000, 0x1000, 0x0000, 0x0000, 0x0000, 0x1000, 0x1000, 0x1000,  // ;
+0x0000, 0x0000, 0x0C00, 0x3000, 0x4000, 0x3000, 0x0C00, 0x0000, 0x0000, 0x0000,  // <
+0x0000, 0x0000, 0x0000, 0x7C00, 0x0000, 0x7C00, 0x0000, 0x0000, 0x0000, 0x0000,  // =
+0x0000, 0x0000, 0x6000, 0x1800, 0x0400, 0x1800, 0x6000, 0x0000, 0x0000, 0x0000,  // >
+0x3800, 0x4400, 0x0400, 0x0800, 0x1000, 0x1000, 0x0000, 0x1000, 0x0000, 0x0000,  // ?
+0x3800, 0x4400, 0x4C00, 0x5400, 0x5C00, 0x4000, 0x4000, 0x3800, 0x0000, 0x0000,  // @
+0x1000, 0x2800, 0x2800, 0x2800, 0x2800, 0x7C00, 0x4400, 0x4400, 0x0000, 0x0000,  // A
+0x7800, 0x4400, 0x4400, 0x7800, 0x4400, 0x4400, 0x4400, 0x7800, 0x0000, 0x0000,  // B
+0x3800, 0x4400, 0x4000, 0x4000, 0x4000, 0x4000, 0x4400, 0x3800, 0x0000, 0x0000,  // C
+0x7000, 0x4800, 0x4400, 0x4400, 0x4400, 0x4400, 0x4800, 0x7000, 0x0000, 0x0000,  // D
+0x7C00, 0x4000, 0x4000, 0x7C00, 0x4000, 0x4000, 0x4000, 0x7C00, 0x0000, 0x0000,  // E
+0x7C00, 0x4000, 0x4000, 0x7800, 0x4000, 0x4000, 0x4000, 0x4000, 0x0000, 0x0000,  // F
+0x3800, 0x4400, 0x4000, 0x4000, 0x5C00, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // G
+0x4400, 0x4400, 0x4400, 0x7C00, 0x4400, 0x4400, 0x4400, 0x4400, 0x0000, 0x0000,  // H
+0x3800, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x3800, 0x0000, 0x0000,  // I
+0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x0400, 0x4400, 0x3800, 0x0000, 0x0000,  // J
+0x4400, 0x4800, 0x5000, 0x6000, 0x5000, 0x4800, 0x4800, 0x4400, 0x0000, 0x0000,  // K
+0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x4000, 0x7C00, 0x0000, 0x0000,  // L
+0x4400, 0x6C00, 0x6C00, 0x5400, 0x4400, 0x4400, 0x4400, 0x4400, 0x0000, 0x0000,  // M
+0x4400, 0x6400, 0x6400, 0x5400, 0x5400, 0x4C00, 0x4C00, 0x4400, 0x0000, 0x0000,  // N
+0x3800, 0x4400, 0x4400, 0x4400, 0x4400, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // O
+0x7800, 0x4400, 0x4400, 0x4400, 0x7800, 0x4000, 0x4000, 0x4000, 0x0000, 0x0000,  // P
+0x3800, 0x4400, 0x4400, 0x4400, 0x4400, 0x4400, 0x5400, 0x3800, 0x0400, 0x0000,  // Q
+0x7800, 0x4400, 0x4400, 0x4400, 0x7800, 0x4800, 0x4800, 0x4400, 0x0000, 0x0000,  // R
+0x3800, 0x4400, 0x4000, 0x3000, 0x0800, 0x0400, 0x4400, 0x3800, 0x0000, 0x0000,  // S
+0x7C00, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x0000,  // T
+0x4400, 0x4400, 0x4400, 0x4400, 0x4400, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // U
+0x4400, 0x4400, 0x4400, 0x2800, 0x2800, 0x2800, 0x1000, 0x1000, 0x0000, 0x0000,  // V
+0x4400, 0x4400, 0x5400, 0x5400, 0x5400, 0x6C00, 0x2800, 0x2800, 0x0000, 0x0000,  // W
+0x4400, 0x2800, 0x2800, 0x1000, 0x1000, 0x2800, 0x2800, 0x4400, 0x0000, 0x0000,  // X
+0x4400, 0x4400, 0x2800, 0x2800, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x0000,  // Y
+0x7C00, 0x0400, 0x0800, 0x1000, 0x1000, 0x2000, 0x4000, 0x7C00, 0x0000, 0x0000,  // Z
+0x1800, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1800,  // [
+0x2000, 0x2000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0800, 0x0800, 0x0000, 0x0000,  /* \ */
+0x3000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x3000,  // ]
+0x1000, 0x2800, 0x2800, 0x4400, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // ^
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xFE00,  // _
+0x2000, 0x1000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // `
+0x0000, 0x0000, 0x3800, 0x4400, 0x3C00, 0x4400, 0x4C00, 0x3400, 0x0000, 0x0000,  // a
+0x4000, 0x4000, 0x5800, 0x6400, 0x4400, 0x4400, 0x6400, 0x5800, 0x0000, 0x0000,  // b
+0x0000, 0x0000, 0x3800, 0x4400, 0x4000, 0x4000, 0x4400, 0x3800, 0x0000, 0x0000,  // c
+0x0400, 0x0400, 0x3400, 0x4C00, 0x4400, 0x4400, 0x4C00, 0x3400, 0x0000, 0x0000,  // d
+0x0000, 0x0000, 0x3800, 0x4400, 0x7C00, 0x4000, 0x4400, 0x3800, 0x0000, 0x0000,  // e
+0x0C00, 0x1000, 0x7C00, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x0000,  // f
+0x0000, 0x0000, 0x3400, 0x4C00, 0x4400, 0x4400, 0x4C00, 0x3400, 0x0400, 0x7800,  // g
+0x4000, 0x4000, 0x5800, 0x6400, 0x4400, 0x4400, 0x4400, 0x4400, 0x0000, 0x0000,  // h
+0x1000, 0x0000, 0x7000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x0000,  // i
+0x1000, 0x0000, 0x7000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0xE000,  // j
+0x4000, 0x4000, 0x4800, 0x5000, 0x6000, 0x5000, 0x4800, 0x4400, 0x0000, 0x0000,  // k
+0x7000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x0000,  // l
+0x0000, 0x0000, 0x7800, 0x5400, 0x5400, 0x5400, 0x5400, 0x5400, 0x0000, 0x0000,  // m
+0x0000, 0x0000, 0x5800, 0x6400, 0x4400, 0x4400, 0x4400, 0x4400, 0x0000, 0x0000,  // n
+0x0000, 0x0000, 0x3800, 0x4400, 0x4400, 0x4400, 0x4400, 0x3800, 0x0000, 0x0000,  // o
+0x0000, 0x0000, 0x5800, 0x6400, 0x4400, 0x4400, 0x6400, 0x5800, 0x4000, 0x4000,  // p
+0x0000, 0x0000, 0x3400, 0x4C00, 0x4400, 0x4400, 0x4C00, 0x3400, 0x0400, 0x0400,  // q
+0x0000, 0x0000, 0x5800, 0x6400, 0x4000, 0x4000, 0x4000, 0x4000, 0x0000, 0x0000,  // r
+0x0000, 0x0000, 0x3800, 0x4400, 0x3000, 0x0800, 0x4400, 0x3800, 0x0000, 0x0000,  // s
+0x2000, 0x2000, 0x7800, 0x2000, 0x2000, 0x2000, 0x2000, 0x1800, 0x0000, 0x0000,  // t
+0x0000, 0x0000, 0x4400, 0x4400, 0x4400, 0x4400, 0x4C00, 0x3400, 0x0000, 0x0000,  // u
+0x0000, 0x0000, 0x4400, 0x4400, 0x2800, 0x2800, 0x2800, 0x1000, 0x0000, 0x0000,  // v
+0x0000, 0x0000, 0x5400, 0x5400, 0x5400, 0x6C00, 0x2800, 0x2800, 0x0000, 0x0000,  // w
+0x0000, 0x0000, 0x4400, 0x2800, 0x1000, 0x1000, 0x2800, 0x4400, 0x0000, 0x0000,  // x
+0x0000, 0x0000, 0x4400, 0x4400, 0x2800, 0x2800, 0x1000, 0x1000, 0x1000, 0x6000,  // y
+0x0000, 0x0000, 0x7C00, 0x0800, 0x1000, 0x2000, 0x4000, 0x7C00, 0x0000, 0x0000,  // z
+0x1800, 0x1000, 0x1000, 0x1000, 0x2000, 0x2000, 0x1000, 0x1000, 0x1000, 0x1800,  // {
+0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000,  // |
+0x3000, 0x1000, 0x1000, 0x1000, 0x0800, 0x0800, 0x1000, 0x1000, 0x1000, 0x3000,  // }
+0x0000, 0x0000, 0x0000, 0x7400, 0x4C00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // ~
+};
 
 
 #define DEBUG true      // change to false to stop Serial output if you use a display such as LED or LCD
@@ -16,10 +283,14 @@
 #include <SPI.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include <ArduinoJson.h>
+#include <SPIFFS.h>
+
 
 #define TRIGGER_PIN 0
 #define CLK 21
 #define DIO 20
+#define PWMPIN 7
 #define RTC_INTERRUPT_PIN 9 // interrupt on GPIO 12
 #define LATCHPIN 14
 #define OEPIN 3
@@ -31,19 +302,30 @@
 #define UDP_LISTEN_PORT 8888
 #define VSPI FSPI
 
-#define BLOCKSY     4
-uint8_t x = 0,y = 0;
-uint16_t displayData[16];
-uint8_t letterA[8] = {
-  0b00010000,
-  0b00010000,
-  0b00101000,
-  0b00101000,
-  0b01000100,
-  0b01111100,
-  0b10000010,
-  0b10000010
-};
+#define BLOCKSX     4
+
+
+
+char APIP[14] = "192.168.4.111";
+char STAIP[14] = "192.168.1.222";
+char GATEIP[14] = "192.168.1.0";
+bool shouldSaveConfig = false;
+
+void saveConfigCallback () {
+  Serial.println("Should save config");
+  shouldSaveConfig = true;
+}
+  WiFiManagerParameter custom_mqtt_server("apip", "Accesspoint IP", APIP, 14);
+  WiFiManagerParameter custom_mqtt_port("staip", "Station IP", STAIP, 14);
+  WiFiManagerParameter custom_api_token("gateip", "API token", GATEIP, 14);
+
+
+
+uint8_t x = 48,y = 0;
+uint16_t displayData[64];
+
+uint8_t timerFlag;
+uint8_t toggle;
 unsigned int  timeout   = 120; // seconds to run for
 unsigned int  startTime = millis();
 bool portalRunning      = false;
@@ -58,12 +340,34 @@ volatile uint32_t sysClock, ntpAlarmCounter; // the actual clock reference & fra
 volatile bool outputTimestampEnable = false;  // used to trigger output of the current time
 volatile bool halfSec = false;
 
-WiFiManagerParameter custom_ntpip("ntpipadd","ntp ip add",ntpip,40);
+
+
 WiFiManager wm;
 TM1637Display display(CLK, DIO);
 DS3232RTC RTC;
 SPIClass * vspi = NULL;
+
 WiFiUDP ntpClient;
+// DynamicJsonDocument doc(1024);
+// doc["isDefault"]            = true;
+// doc["defAPIP"]              = "192.168.4.111";
+// doc["defSTAIP"]             = "192.168.1.222";
+// doc["defGATEIP"]            = "192.168.1.1";
+// doc["defMASK"]              = "255.255.255.0";
+// doc["defTIMEZONE"]          = "CEST";
+// doc["defBRIGHTMODE"]        = "AUTO";
+// doc["defBRIGHTVAL"]         = "32";
+// doc["defSHOWSECONDS"]       = "TRUE";
+
+// doc["APIP"]              = "";
+// doc["STAIP"]             = "";
+// doc["GATEIP"]            = "";
+// doc["MASK"]              = "";
+// doc["TIMEZONE"]          = "";
+// doc["BRIGHTMODE"]        = "";
+// doc["BRIGHTVAL"]         = "";
+// doc["SHOWSECONDS"]       = "";
+
 
 /* TIMEZONE */
 /*
@@ -115,7 +419,10 @@ TimeChangeRule *tcr;        //pointer to the time change rule, use to get the TZ
 
 
 //volatile uint32_t sysFraction;  // for future development
-
+hw_timer_t *My_timer = NULL;
+void IRAM_ATTR onTimer(){
+timerFlag = 1;
+}
 void ICACHE_RAM_ATTR rtcIntISR(void);
 // the RTC 1PPS signal calls this ISR
 void ICACHE_RAM_ATTR rtcIntISR(void) {
@@ -207,32 +514,48 @@ void drawPixel(uint8_t x, uint8_t y, uint8_t color)
   xBlock = x / 8;
   xPos = x % 8;
   int16_t yTemp;
+  if( x > 31 )
+  {
+    xBlock += 12;
+  }
+  if( y > 7 )
+  {
+    y = y-4;
+    xBlock += 24; 
+  }
+  
+  // Serial.print("x:");Serial.print(x);
+  // Serial.print("y:");Serial.println(y);
+  // Serial.print("yHighOrLow:");Serial.print(yHighOrLow);
+  // Serial.print("ycalc:");Serial.println((y / 2));
+  // Serial.print("xBlock:");Serial.print(xBlock);
+  // Serial.print("xPos:");Serial.println(xPos);
   if (color)  //draw
   {
     if (yHighOrLow == 0) 
     {
-      displayData[xBlock + (y / 2) * BLOCKSY] |= 1 << xPos;
+      displayData[xBlock + ((y / 2)*4) ] |= 1 << xPos;
     } else 
     {
-      displayData[xBlock + (y / 2) * BLOCKSY] |= 1 << (xPos + 8);
+      displayData[xBlock + ((y / 2)*4)] |= 1 << (xPos + 8);
     }
   } else  //clear
   {
     if (yHighOrLow == 0) 
     {
-      displayData[xBlock + (y / 2) * BLOCKSY] &= ~(1 << xPos);
+      displayData[xBlock + ((y / 2)*4) ] &= ~(1 << xPos);
     } else 
     {
-      displayData[xBlock + (y / 2) * BLOCKSY] &= ~(1 << (xPos + 8));
+      displayData[xBlock + ((y / 2)*4)] &= ~(1 << (xPos + 8));
     }
   }
 }
 void sendDisplay(void)
 {
   digitalWrite(OEPIN, 1);
-  vspi->beginTransaction(SPISettings(1000000, LSBFIRST, SPI_MODE0));
+  vspi->beginTransaction(SPISettings(10000000, LSBFIRST, SPI_MODE0));
 
-  for(int i = 0;i<16;i++)
+  for(int i = 0;i<64;i++)
   {
     vspi->transfer16(displayData[i]);
   }
@@ -241,24 +564,117 @@ void sendDisplay(void)
   digitalWrite(LATCHPIN, 0);
   digitalWrite(OEPIN, 0);
 }
-
+char WriteChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
+    uint32_t i, b, j;
+    
+    // Check if character is valid
+    if (ch < 32 || ch > 126)
+        return 0;
+    
+    // Use the font to write
+    for(i = 0; i < 10; i++) 
+    {
+        b = Font7x10[(ch - 32) * 10 + i];
+        for(j = 0; j < 7; j++) 
+        {
+            if((b << j) & 0x8000)  
+            {
+                drawPixel(x+j, (y+9)-i,color);
+            } else 
+            {
+                drawPixel(x+j, (y+9)-i,!color);
+            }
+        }
+    }
+    return ch;
+}
+char WriteBigChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
+    uint32_t xt, yt, i, f, j;
+    
+    // Check if character is valid
+    if (ch < 48 || ch > 57)
+        return 0;
+    
+    // Use the font to write
+    for(i = 0; i < 16; i++) 
+    {
+        f = Font13x16[ ( ch - 48 ) *16 + i];
+        for(j = 0; j < 13; j++) 
+        {
+            if((f << j) & 0x8000)  
+            {
+                drawPixel(x+j, 15-i,1);
+            } else 
+            {
+                drawPixel(x+j, 15-i,!1);
+            }
+        }
+    }
+    return ch;
+}
 /**********************************************************************************************************************************************************/
 /* SETUP */
 /*********/
 void setup() {
-
+  
+  
   display.setBrightness(7,true);
+  
   WiFi.disconnect();
   vspi = new SPIClass(VSPI);
   vspi->begin(VSPI_SCLK, VSPI_MISO, VSPI_MOSI, VSPI_SS); //SCLK, MISO, MOSI, SS
   pinMode(LATCHPIN, OUTPUT);
   pinMode(OEPIN, OUTPUT);
   memset(displayData,0,32);
+  My_timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(My_timer, &onTimer, true);
+  timerAlarmWrite(My_timer, 1000000, true);
+  timerAlarmEnable(My_timer); //Just Enable
+  ledcSetup(4, 5000, 8);
+  ledcAttachPin(6, 4);
+  ledcWrite(4, 128);
+  
 #if DEBUG
   Serial.begin(57600);
   Serial << F("A.N.T. Accurate Ntp Time (C) Phil Morris 2018 <www.lydiard.plus.com>") << endl;
 #endif
-  
+
+
+  if (SPIFFS.begin()) {
+    Serial.println("mounted file system");
+    if (SPIFFS.exists("/config.json")) {
+      //file exists, reading and loading
+      Serial.println("reading config file");
+      File configFile = SPIFFS.open("/config.json", "r");
+      if (configFile) {
+        Serial.println("opened config file");
+        size_t size = configFile.size();
+        // Allocate a buffer to store contents of the file.
+        std::unique_ptr<char[]> buf(new char[size]);
+
+        configFile.readBytes(buf.get(), size);
+        DynamicJsonDocument json(1024);
+        auto deserializeError = deserializeJson(json, buf.get());
+        serializeJson(json, Serial);
+        if ( ! deserializeError ) {
+          Serial.println("\nparsed json");
+          strcpy(APIP, json["APIP"]);
+          strcpy(STAIP, json["STAIP"]);
+          strcpy(GATEIP, json["GATEIP"]);
+        } else {
+          Serial.println("failed to load json config");
+        }
+        configFile.close();
+      }
+    }
+  } else {
+    Serial.println("failed to mount FS");
+  }
+
+  wm.setSaveConfigCallback(saveConfigCallback);
+  wm.addParameter(&custom_mqtt_server);
+  wm.addParameter(&custom_mqtt_port);
+  wm.addParameter(&custom_api_token);
   RTC.begin();
   RTC.squareWave(DS3232RTC::SQWAVE_1_HZ);   // 1 Hz square wave
 
@@ -268,7 +684,7 @@ void setup() {
   wm.setHostname("NARVAL_CLOCK1");
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin("nemeth_wifi","75000000");
+  WiFi.begin("GMPuc6","75000000");
   delay(5000);
   Serial << (F("IP address is ")) << WiFi.localIP() << endl;
 
@@ -301,6 +717,7 @@ bool connected = false;
 void loop() {
   
   if (WiFi.status() == WL_CONNECTED && !connected) {
+    
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
@@ -315,7 +732,7 @@ void loop() {
     if(startAP){
       Serial.println("Button Pressed, Starting Config Portal");
 
-      wm.addParameter(&custom_ntpip);
+      
       wm.setConfigPortalBlocking(false);
       wm.startConfigPortal("Frissházasok");
     } else {
@@ -401,27 +818,99 @@ void loop() {
     int num;
     num = tm.Minute*100;
     num+= tm.Second;
+    
     if(halfSec)
     {
-        memset(displayData,0x00,32);
-        x++;
-        if(x >31)
-        {
-          x = 0;
-          y++;
-          if(y >7)
-          {
-            y = 0;
-          }
-        }
-        drawPixel(x, y, 1);
-          
-      sendDisplay();
+        
       display.showNumberDecEx(num,0b01000000,false,4,0);
+      memset(displayData,0x00,128);
+
+      // WriteChar((tm.Hour/10)+0x30,0,0, 1);
+      // WriteChar((tm.Hour%10)+0x30,7,0, 1);
+      // WriteChar(':',14,0, 1);
+      // WriteChar((tm.Minute/10)+0x30,21,0, 1);
+      // WriteChar((tm.Minute%10)+0x30,28,0, 1);
+      // WriteChar(':',35,0, 1);
+      // WriteChar((tm.Second/10)+0x30,42,0, 1);
+      // WriteChar((tm.Second%10)+0x30,49,0, 1);
+      WriteBigChar((tm.Minute/10)+0x30,0,0,1);
+      WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+      drawPixel(31, 11, 1);
+      drawPixel(31, 10, 1);
+      drawPixel(32, 11, 1);
+      drawPixel(32, 10, 1);
+
+      drawPixel(31, 5, 1);
+      drawPixel(31, 4, 1);
+      drawPixel(32, 5, 1);
+      drawPixel(32, 4, 1);
+      WriteBigChar((tm.Second/10)+0x30,35,0,1);
+      WriteBigChar((tm.Second%10)+0x30,51,0,1);
+      // uint32_t temp = 0x24242424;
+      // uint32_t temp2 = 0x24242424;
+      // for(int i = 0;i<32;i++)
+      // {
+      //   if( ( temp >> i ) & 1 )
+      //   {
+      //     drawPixel(i,0,1);
+      //   }
+        
+      // }
+      // for(int i = 32;i<64;i++)
+      // {
+      //   if( ( temp2 >> i ) & 1 )
+      //   {
+      //     drawPixel(i,0,1);
+      //   }
+        
+      // }
+      sendDisplay();
+      
     }
     else
     {
-     memset(displayData,0x00,32);
+     //display.showNumberDecEx(num,0b01000000,false,4,0);
+      memset(displayData,0x00,128);
+
+      // WriteChar((tm.Hour/10)+0x30,0,0, 1);
+      // WriteChar((tm.Hour%10)+0x30,7,0, 1);
+      // WriteChar(':',14,0, 1);
+      // WriteChar((tm.Minute/10)+0x30,21,0, 1);
+      // WriteChar((tm.Minute%10)+0x30,28,0, 1);
+      // WriteChar(':',35,0, 1);
+      // WriteChar((tm.Second/10)+0x30,42,0, 1);
+      // WriteChar((tm.Second%10)+0x30,49,0, 1);
+      WriteBigChar((tm.Minute/10)+0x30,0,0,1);
+      WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+      drawPixel(31, 11, 0);
+      drawPixel(31, 10, 0);
+      drawPixel(32, 11, 0);
+      drawPixel(32, 10, 0);
+
+      drawPixel(31, 5, 0);
+      drawPixel(31, 4, 0);
+      drawPixel(32, 5, 0);
+      drawPixel(32, 4, 0);
+      WriteBigChar((tm.Second/10)+0x30,35,0,1);
+      WriteBigChar((tm.Second%10)+0x30,51,0,1);
+      // uint32_t temp = 0x24242424;
+      // uint32_t temp2 = 0x24242424;
+      // for(int i = 0;i<32;i++)
+      // {
+      //   if( ( temp >> i ) & 1 )
+      //   {
+      //     drawPixel(i,0,1);
+      //   }
+        
+      // }
+      // for(int i = 32;i<64;i++)
+      // {
+      //   if( ( temp2 >> i ) & 1 )
+      //   {
+      //     drawPixel(i,0,1);
+      //   }
+        
+      // }
       sendDisplay();
       display.showNumberDecEx(num,0,false,4,0);
     }
@@ -433,4 +922,38 @@ void loop() {
     
     timeSynced = false;
   }
+  if(timerFlag)
+    {
+      if(toggle)
+      {
+        //memset(displayData,0x00,128);
+        // x++;
+        // if(x >63)
+        // {
+        //   x = 0;
+        //   y++;
+        //   if(y >15)
+        //   {
+        //     y = 0;
+        //   }
+        // }
+        // drawPixel(x, y, 1);
+        // WriteChar(x,10,0, 1);
+        // x++;
+        // if(x >91)
+        // {
+        //   x = 48;
+        // }
+          
+      // sendDisplay();
+        toggle = 0;
+      }
+      else
+      {
+      //   memset(displayData,0x00,128);
+      // sendDisplay();
+        toggle = 1;
+      }
+      timerFlag = 0;
+    }
 }// END OF loop
