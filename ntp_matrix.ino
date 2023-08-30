@@ -271,7 +271,7 @@ static const uint16_t Font7x10 [] = {
 
 
 #define DEBUG true      // change to false to stop Serial output if you use a display such as LED or LCD
-
+#include <FS.h>                   //this needs to be first, or it all crashes and burns...
 #include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 #include <TM1637Display.h>//https://github.com/avishorp/TM1637/tree/master
 #include <string.h>
@@ -283,8 +283,8 @@ static const uint16_t Font7x10 [] = {
 #include <SPI.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include <ArduinoJson.h>
-#include <SPIFFS.h>
+ #include <SPIFFS.h>
+#include <ArduinoJson.h> // https://github.com/bblanchon/ArduinoJson
 
 
 #define TRIGGER_PIN 0
@@ -305,25 +305,42 @@ static const uint16_t Font7x10 [] = {
 #define BLOCKSX     4
 
 
+char spiffs_SSID[30] = "GMPuc6";
+char spiffs_PASSWORD[30] = "75000000";
 
-char APIP[14] = "192.168.4.111";
-char STAIP[14] = "192.168.1.222";
-char GATEIP[14] = "192.168.1.0";
+char spiffs_DHCP[2] = "1";
+char spiffs_IP_ADDR[30] = "75000000";
+char spiffs_IP_GATE[30] = "192.168.1.1";
+char spiffs_IP_MASK[30] = "255.255.255.0";
+char spiffs_IP_ACCESS[30] = "192.168.4.10";
+char spiffs_AP_TIMEOUT[4] = "10";
+char spiffs_NTP_IP[30] = "192.168.1.100";
+char spiffs_NTP_URL[40] = "time.windows.com";
+char spiffs_NTP_DAYLIGHT[30] = "1";
+char spiffs_NTP_TIMEZONE[30] = "CE";
+
+
+
+WiFiManagerParameter custom_ipconfig_text       ("<b><center>IP CONFIGURATION</center></b>");
+WiFiManagerParameter custom_dhcp                ("dhcp", "DHCP settings:(1:on,0:off)", spiffs_DHCP, 40);
+WiFiManagerParameter custom_ip_addr             ("ip_addr", "Static ip address(only valid if dhcp = 0)", spiffs_IP_ADDR, 40);
+WiFiManagerParameter custom_ip_gate             ("ip_gate", "Static gateway address(only valid if dhcp = 0)", spiffs_IP_GATE, 40);
+WiFiManagerParameter custom_ip_access           ("ip_access", "Access point ip address", spiffs_IP_ACCESS, 40);
+WiFiManagerParameter custom_ap_timeout          ("ap_timeout", "Access point timeout x10sec", spiffs_AP_TIMEOUT, 40);
+WiFiManagerParameter custom_ntpconfig_text      ("<b><center>NTP CONFIGURATION</center></b>");
+WiFiManagerParameter custom_ntp_ip              ("ntp_ip", "NTP ip server address", spiffs_NTP_IP, 40);
+WiFiManagerParameter custom_ntp_url             ("ntp_url", "NTP url(only valid if ip is set to 0)", spiffs_NTP_URL, 40);
+WiFiManagerParameter custom_ntp_daylight        ("ntp_daylight", "NTP daylight savings setup", spiffs_NTP_DAYLIGHT, 40);
+WiFiManagerParameter custom_ntp_timezone        ("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
 bool shouldSaveConfig = false;
 
 void saveConfigCallback () {
   Serial.println("Should save config");
   shouldSaveConfig = true;
 }
-  WiFiManagerParameter custom_mqtt_server("apip", "Accesspoint IP", APIP, 14);
-  WiFiManagerParameter custom_mqtt_port("staip", "Station IP", STAIP, 14);
-  WiFiManagerParameter custom_api_token("gateip", "API token", GATEIP, 14);
-
-
 
 uint8_t x = 48,y = 0;
 uint16_t displayData[64];
-
 uint8_t timerFlag;
 uint8_t toggle;
 unsigned int  timeout   = 120; // seconds to run for
@@ -348,26 +365,6 @@ DS3232RTC RTC;
 SPIClass * vspi = NULL;
 
 WiFiUDP ntpClient;
-// DynamicJsonDocument doc(1024);
-// doc["isDefault"]            = true;
-// doc["defAPIP"]              = "192.168.4.111";
-// doc["defSTAIP"]             = "192.168.1.222";
-// doc["defGATEIP"]            = "192.168.1.1";
-// doc["defMASK"]              = "255.255.255.0";
-// doc["defTIMEZONE"]          = "CEST";
-// doc["defBRIGHTMODE"]        = "AUTO";
-// doc["defBRIGHTVAL"]         = "32";
-// doc["defSHOWSECONDS"]       = "TRUE";
-
-// doc["APIP"]              = "";
-// doc["STAIP"]             = "";
-// doc["GATEIP"]            = "";
-// doc["MASK"]              = "";
-// doc["TIMEZONE"]          = "";
-// doc["BRIGHTMODE"]        = "";
-// doc["BRIGHTVAL"]         = "";
-// doc["SHOWSECONDS"]       = "";
-
 
 /* TIMEZONE */
 /*
@@ -612,6 +609,8 @@ char WriteBigChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
     }
     return ch;
 }
+
+
 /**********************************************************************************************************************************************************/
 /* SETUP */
 /*********/
@@ -658,23 +657,33 @@ void setup() {
         serializeJson(json, Serial);
         if ( ! deserializeError ) {
           Serial.println("\nparsed json");
-          strcpy(APIP, json["APIP"]);
-          strcpy(STAIP, json["STAIP"]);
-          strcpy(GATEIP, json["GATEIP"]);
+
+          strcpy(spiffs_SSID, json["SSID"]);
+          strcpy(spiffs_PASSWORD, json["PASSWORD"]);
+          Serial.println(spiffs_SSID);
+          Serial.println(spiffs_PASSWORD);
         } else {
           Serial.println("failed to load json config");
         }
-        configFile.close();
       }
     }
   } else {
     Serial.println("failed to mount FS");
   }
-
+  
   wm.setSaveConfigCallback(saveConfigCallback);
-  wm.addParameter(&custom_mqtt_server);
-  wm.addParameter(&custom_mqtt_port);
-  wm.addParameter(&custom_api_token);
+  wm.addParameter(&custom_ipconfig_text);
+  wm.addParameter(&custom_dhcp);
+  wm.addParameter(&custom_ip_addr);
+  wm.addParameter(&custom_ip_gate);
+  wm.addParameter(&custom_ip_access);
+  wm.addParameter(&custom_ap_timeout);
+  wm.addParameter(&custom_ntpconfig_text);
+  wm.addParameter(&custom_ntp_ip);
+  wm.addParameter(&custom_ntp_url);
+  wm.addParameter(&custom_ntp_daylight);
+  wm.addParameter(&custom_ntp_timezone);
+
   RTC.begin();
   RTC.squareWave(DS3232RTC::SQWAVE_1_HZ);   // 1 Hz square wave
 
@@ -684,7 +693,7 @@ void setup() {
   wm.setHostname("NARVAL_CLOCK1");
 
   WiFi.mode(WIFI_STA);
-  WiFi.begin("GMPuc6","75000000");
+  WiFi.begin(spiffs_SSID,spiffs_PASSWORD);
   delay(5000);
   Serial << (F("IP address is ")) << WiFi.localIP() << endl;
 
