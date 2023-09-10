@@ -171,6 +171,258 @@ static const uint16_t Font13x16 [] = {
 0b0011111111100000,
 0b0001111111000000
 };
+static const uint32_t Font18x24[] = {
+0b00000111111110000000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00000111111110000000000000000000,
+								  
+0b00000000001111000000000000000000,
+0b00000000011111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000001111111000000000000000000,
+0b00000011111111000000000000000000,
+0b00000111111111000000000000000000,
+0b00001111111111000000000000000000,
+0b00011111111111000000000000000000,
+0b00111110111111000000000000000000,
+0b01111100111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+								  
+0b00000111111110000000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000111111000000000000000,
+0b00000000001111110000000000000000,
+0b00000000011111100000000000000000,
+0b00000000111111000000000000000000,
+0b00000001111110000000000000000000,
+0b00000011111100000000000000000000,
+0b00000111111000000000000000000000,
+0b00001111110000000000000000000000,
+0b00011111100000000000000000000000,
+0b00111111000000000000000000000000,
+0b01111110000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+								  
+0b00000111111110000000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000111111000000000000000,
+0b00000000001111110000000000000000,
+0b00000011111111100000000000000000,
+0b00000011111111100000000000000000,
+0b00000000001111110000000000000000,
+0b00000000000111111000000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00000111111110000000000000000000,
+								  
+0b00000000000001100000000000000000,
+0b00000000000011100000000000000000,
+0b00000000000111100000000000000000,
+0b00000000001111100000000000000000,
+0b00000000011111100000000000000000,
+0b00000000111111100000000000000000,
+0b00000001111111100000000000000000,
+0b00000011111111100000000000000000,
+0b00000111111111100000000000000000,
+0b00001111101111100000000000000000,
+0b00011111001111100000000000000000,
+0b00111110001111100000000000000000,
+0b01111100001111100000000000000000,
+0b11111100001111100000000000000000,
+0b11111100001111100000000000000000,
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b00000000011111100000000000000000,
+0b00000000011111100000000000000000,
+0b00000000011111100000000000000000,
+0b00000000011111100000000000000000,
+0b00000000011111100000000000000000,
+0b00000000011111100000000000000000,
+								  
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111111111110000000000000000000,
+0b11111111111111100000000000000000,
+0b11111111111111110000000000000000,
+0b11111000000111111000000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00000111111110000000000000000000,
+								  
+0b00000111111110000000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100000000000000000000000000,
+0b11111100111000000000000000000000,
+0b11111111111111000000000000000000,
+0b11111111111111110000000000000000,
+0b11111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00000111111110000000000000000000,
+								  
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b11111111111111111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000111111000000000000000,
+0b00000000000111111000000000000000,
+0b00000000001111110000000000000000,
+0b00000000001111110000000000000000,
+0b00000000011111100000000000000000,
+0b00000000011111100000000000000000,
+0b00000000111111000000000000000000,
+0b00000000111111000000000000000000,
+0b00000001111110000000000000000000,
+0b00000001111110000000000000000000,
+0b00000011111100000000000000000000,
+0b00000011111100000000000000000000,
+0b00000111111000000000000000000000,
+0b00000111111000000000000000000000,
+0b00001111110000000000000000000000,
+0b00001111110000000000000000000000,
+0b00011111100000000000000000000000,
+0b00011111100000000000000000000000,
+								  
+0b00000111111110000000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00000111111110000000000000000000,
+								  
+0b00000111111110000000000000000000,
+0b00001111111111000000000000000000,
+0b00111111111111110000000000000000,
+0b01111110000111111000000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111100000000000000,
+0b00111111111111111100000000000000,
+0b00001111111111111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b00000000000011111100000000000000,
+0b11111100000011111100000000000000,
+0b01111110000111111000000000000000,
+0b00111111111111110000000000000000,
+0b00001111111111000000000000000000,
+0b00000111111110000000000000000000
+
+};
 static const uint16_t Font7x10 [] = {
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // sp
 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x1000, 0x0000, 0x1000, 0x0000, 0x0000,  // !
@@ -285,7 +537,7 @@ static const uint16_t Font7x10 [] = {
 #include <WiFiUdp.h>
  #include <SPIFFS.h>
 #include <ArduinoJson.h> // https://github.com/bblanchon/ArduinoJson
-
+#include <Adafruit_NeoPixel.h>
 
 #define TRIGGER_PIN 0
 #define CLK 21
@@ -303,13 +555,13 @@ static const uint16_t Font7x10 [] = {
 #define VSPI FSPI
 
 #define BLOCKSX     4
-
+Adafruit_NeoPixel led(1, 48, NEO_GRB + NEO_KHZ800);
 
 char spiffs_SSID[30] = "GMPuc6";
 char spiffs_PASSWORD[30] = "75000000";
 
 char spiffs_DHCP[2] = "1";
-char spiffs_IP_ADDR[30] = "75000000";
+char spiffs_IP_ADDR[30] = "192.168.1.123";
 char spiffs_IP_GATE[30] = "192.168.1.1";
 char spiffs_IP_MASK[30] = "255.255.255.0";
 char spiffs_IP_ACCESS[30] = "192.168.4.10";
@@ -318,29 +570,43 @@ char spiffs_NTP_IP[30] = "192.168.1.100";
 char spiffs_NTP_URL[40] = "time.windows.com";
 char spiffs_NTP_DAYLIGHT[30] = "1";
 char spiffs_NTP_TIMEZONE[30] = "CE";
+char spiffs_NTP_GPSENABLE[30] = "0";
+char spiffs_BRIGHTNESS_AUTOMANUAL[30] = "0";
+char spiffs_BRIGHTNESS_VAL[30] = "32";
+char spiffs_COLON_BLINK[30] = "1";
+char spiffs_DISPLAY_SIZE[30] = "32";
 
 
+WiFiManagerParameter custom_ipconfig_text                 ("<b><center>IP CONFIGURATION</center></b>");//////////////////////////////////////////
+WiFiManagerParameter custom_dhcp                          ("dhcp", "DHCP settings:(1:on,0:off)", spiffs_DHCP, 40);
+WiFiManagerParameter custom_ip_addr                       ("ip_addr", "Static ip address(only valid if dhcp = 0)", spiffs_IP_ADDR, 40);
+WiFiManagerParameter custom_ip_gate                       ("ip_gate", "Static gateway address(only valid if dhcp = 0)", spiffs_IP_GATE, 40);
+WiFiManagerParameter custom_ip_mask                       ("ip_mask", "Static subnet mask(only valid if dhcp = 0)", spiffs_IP_MASK, 40);
+WiFiManagerParameter custom_ip_access                     ("ip_access", "Access point ip address", spiffs_IP_ACCESS, 40);
+WiFiManagerParameter custom_ap_timeout                    ("ap_timeout", "Access point timeout x10sec", spiffs_AP_TIMEOUT, 40);
+WiFiManagerParameter custom_ntpconfig_text                ("<b><center>NTP CONFIGURATION</center></b>");//////////////////////////////////////////
+WiFiManagerParameter custom_ntp_ip                        ("ntp_ip", "NTP ip server address", spiffs_NTP_IP, 40);
+WiFiManagerParameter custom_ntp_url                       ("ntp_url", "NTP url(only valid if ip is set to 0)", spiffs_NTP_URL, 40);
+WiFiManagerParameter custom_ntp_daylight                  ("ntp_daylight", "NTP daylight savings setup", spiffs_NTP_DAYLIGHT, 40);
+WiFiManagerParameter custom_ntp_timezone                  ("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
+WiFiManagerParameter custom_ntp_gpsenable                 ("ntp_tgpsenable", "GPS enable", spiffs_NTP_GPSENABLE, 5);
+WiFiManagerParameter custom_display_config_text           ("<b><center>DISPLAY CONFIGURATION</center></b>");////////////////////////////////////
+WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto/manual)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
+WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-255),(auto-> max val)", spiffs_BRIGHTNESS_VAL, 40);
+WiFiManagerParameter custom_display_colon_blink           ("display_colon_blink", "Display colon(double dot) blink", spiffs_COLON_BLINK, 40);
+WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,32,48)", spiffs_DISPLAY_SIZE, 40);
 
-WiFiManagerParameter custom_ipconfig_text       ("<b><center>IP CONFIGURATION</center></b>");
-WiFiManagerParameter custom_dhcp                ("dhcp", "DHCP settings:(1:on,0:off)", spiffs_DHCP, 40);
-WiFiManagerParameter custom_ip_addr             ("ip_addr", "Static ip address(only valid if dhcp = 0)", spiffs_IP_ADDR, 40);
-WiFiManagerParameter custom_ip_gate             ("ip_gate", "Static gateway address(only valid if dhcp = 0)", spiffs_IP_GATE, 40);
-WiFiManagerParameter custom_ip_access           ("ip_access", "Access point ip address", spiffs_IP_ACCESS, 40);
-WiFiManagerParameter custom_ap_timeout          ("ap_timeout", "Access point timeout x10sec", spiffs_AP_TIMEOUT, 40);
-WiFiManagerParameter custom_ntpconfig_text      ("<b><center>NTP CONFIGURATION</center></b>");
-WiFiManagerParameter custom_ntp_ip              ("ntp_ip", "NTP ip server address", spiffs_NTP_IP, 40);
-WiFiManagerParameter custom_ntp_url             ("ntp_url", "NTP url(only valid if ip is set to 0)", spiffs_NTP_URL, 40);
-WiFiManagerParameter custom_ntp_daylight        ("ntp_daylight", "NTP daylight savings setup", spiffs_NTP_DAYLIGHT, 40);
-WiFiManagerParameter custom_ntp_timezone        ("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
 bool shouldSaveConfig = false;
+bool shouldSaveWifiConfig = false;
 
 void saveConfigCallback () {
   Serial.println("Should save config");
   shouldSaveConfig = true;
 }
 
+
 uint8_t x = 48,y = 0;
-uint16_t displayData[64];
+uint16_t displayData[192];
 uint8_t timerFlag;
 uint8_t toggle;
 unsigned int  timeout   = 120; // seconds to run for
@@ -365,6 +631,62 @@ DS3232RTC RTC;
 SPIClass * vspi = NULL;
 
 WiFiUDP ntpClient;
+
+boolean isIp(String str) {
+  for (size_t i = 0; i < str.length(); i++) {
+    int c = str.charAt(i);
+    if (c != '.' && (c < '0' || c > '9')) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+void wifiSaveConfigCallback () {
+  Serial.println("Should save wifi config");
+  shouldSaveWifiConfig = true;
+  if (shouldSaveWifiConfig) {
+    Serial.println("saving  wifi config");
+    wm.getWiFiSSID().toCharArray(spiffs_SSID,wm.getWiFiSSID().length()+1);
+    wm.getWiFiPass().toCharArray(spiffs_PASSWORD,wm.getWiFiPass().length()+1);
+
+    
+    
+    Serial.println(spiffs_SSID);
+    Serial.println(spiffs_PASSWORD);
+    DynamicJsonDocument json(1024);
+
+    json["SSID"] = spiffs_SSID;
+    json["PASSWORD"] = spiffs_PASSWORD;
+
+    json["DHCP_ONOFF"] = spiffs_DHCP;
+    json["STATIC_IP_ADD"] = spiffs_IP_ADDR;
+    json["STATIC_DEF_GATE"] = spiffs_IP_GATE;
+    json["STATIC_SUBNET"] = spiffs_IP_MASK;
+    json["ACCESS_POINT_IP"] = spiffs_IP_ACCESS;
+    json["ACCESS_POINT_TIMEOUT"] = spiffs_AP_TIMEOUT;
+    json["NTP_ADD"] = spiffs_NTP_IP;
+    json["NTP_URL"] = spiffs_NTP_URL;
+    json["NTP_DAYLIGHTSAVINGS"] = spiffs_NTP_DAYLIGHT;
+    json["NTP_TIMEZONE"] = spiffs_NTP_TIMEZONE;
+    json["NTP_GPSENABLE"] = spiffs_NTP_GPSENABLE;
+    json["BRIGHTNESS_AUTOMANUAL"] = spiffs_BRIGHTNESS_AUTOMANUAL;
+    json["BRIGHTNESS_VAL"] = spiffs_BRIGHTNESS_VAL;
+    json["DISPLAY_COLON_BLINK"] = spiffs_COLON_BLINK;
+    json["DISPLAY_SIZE"] = spiffs_DISPLAY_SIZE;
+
+    File configFile = SPIFFS.open("/config.json", "w");
+    if (!configFile) {
+      Serial.println("failed to open config file for writing");
+    }
+    serializeJson(json, Serial);
+    serializeJson(json, configFile);
+    configFile.close();
+    //end save
+    shouldSaveWifiConfig = false;
+  }
+}
 
 /* TIMEZONE */
 /*
@@ -511,14 +833,33 @@ void drawPixel(uint8_t x, uint8_t y, uint8_t color)
   xBlock = x / 8;
   xPos = x % 8;
   int16_t yTemp;
+  
   if( x > 31 )
   {
+    if(x < 64)
+    {
     xBlock += 12;
+    }
+    if(x > 63)
+    {
+      xBlock += 24;
+    }
   }
+  
   if( y > 7 )
   {
-    y = y-4;
-    xBlock += 24; 
+    if(y < 16)
+    {
+      y = y-4;
+      xBlock += 40; //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
+    }
+    if(y > 15)
+    {
+       y = y-8;
+      xBlock += 80; //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
+    }
+    
+    
   }
   
   // Serial.print("x:");Serial.print(x);
@@ -552,7 +893,7 @@ void sendDisplay(void)
   digitalWrite(OEPIN, 1);
   vspi->beginTransaction(SPISettings(10000000, LSBFIRST, SPI_MODE0));
 
-  for(int i = 0;i<64;i++)
+  for(int i = 0;i<144;i++)
   {
     vspi->transfer16(displayData[i]);
   }
@@ -609,6 +950,30 @@ char WriteBigChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
     }
     return ch;
 }
+char WriteBiggerChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
+    uint32_t xt, yt, i, f, j;
+    
+    // Check if character is valid
+    if (ch < 48 || ch > 57)
+        return 0;
+    
+    // Use the font to write
+    for(i = 0; i < 24; i++) 
+    {
+        f = Font18x24[ ( ch - 48 ) *24 + i];
+        for(j = 0; j < 18; j++) 
+        {
+            if((f << j) & 0x80000000)  
+            {
+                drawPixel(x+j, 23-i,1);
+            } else 
+            {
+                drawPixel(x+j, 23-i,!1);
+            }
+        }
+    }
+    return ch;
+}
 
 
 /**********************************************************************************************************************************************************/
@@ -648,6 +1013,8 @@ void setup() {
       if (configFile) {
         Serial.println("opened config file");
         size_t size = configFile.size();
+        Serial.print("opened config file size:");
+        Serial.println(size);
         // Allocate a buffer to store contents of the file.
         std::unique_ptr<char[]> buf(new char[size]);
 
@@ -658,8 +1025,23 @@ void setup() {
         if ( ! deserializeError ) {
           Serial.println("\nparsed json");
 
-          strcpy(spiffs_SSID, json["SSID"]);
-          strcpy(spiffs_PASSWORD, json["PASSWORD"]);
+          strcpy(spiffs_SSID,                   json["SSID"]);
+          strcpy(spiffs_PASSWORD,               json["PASSWORD"]);
+          strcpy(spiffs_DHCP,                   json["DHCP_ONOFF"]);
+          strcpy(spiffs_IP_ADDR,                json["STATIC_IP_ADD"]);
+          strcpy(spiffs_IP_GATE,                json["STATIC_DEF_GATE"]);
+          strcpy(spiffs_IP_MASK,                json["STATIC_SUBNET"]);
+          strcpy(spiffs_IP_ACCESS,              json["ACCESS_POINT_IP"]);
+          strcpy(spiffs_AP_TIMEOUT,             json["ACCESS_POINT_TIMEOUT"]);
+          strcpy(spiffs_NTP_IP,                 json["NTP_ADD"]);
+          strcpy(spiffs_NTP_URL,                json["NTP_URL"]);
+          strcpy(spiffs_NTP_DAYLIGHT,           json["NTP_DAYLIGHTSAVINGS"]);
+          strcpy(spiffs_NTP_TIMEZONE,           json["NTP_TIMEZONE"]);
+          strcpy(spiffs_NTP_GPSENABLE,          json["NTP_GPSENABLE"]);
+          strcpy(spiffs_BRIGHTNESS_AUTOMANUAL,  json["BRIGHTNESS_AUTOMANUAL"]);
+          strcpy(spiffs_BRIGHTNESS_VAL,         json["BRIGHTNESS_VAL"]);
+          strcpy(spiffs_COLON_BLINK,            json["DISPLAY_COLON_BLINK"]);
+          strcpy(spiffs_DISPLAY_SIZE,           json["DISPLAY_SIZE"]);
           Serial.println(spiffs_SSID);
           Serial.println(spiffs_PASSWORD);
         } else {
@@ -671,11 +1053,12 @@ void setup() {
     Serial.println("failed to mount FS");
   }
   
-  wm.setSaveConfigCallback(saveConfigCallback);
+  
   wm.addParameter(&custom_ipconfig_text);
   wm.addParameter(&custom_dhcp);
   wm.addParameter(&custom_ip_addr);
   wm.addParameter(&custom_ip_gate);
+  wm.addParameter(&custom_ip_mask);
   wm.addParameter(&custom_ip_access);
   wm.addParameter(&custom_ap_timeout);
   wm.addParameter(&custom_ntpconfig_text);
@@ -683,7 +1066,17 @@ void setup() {
   wm.addParameter(&custom_ntp_url);
   wm.addParameter(&custom_ntp_daylight);
   wm.addParameter(&custom_ntp_timezone);
+  wm.addParameter(&custom_ntp_gpsenable);
+  wm.addParameter(&custom_display_config_text);
+  wm.addParameter(&custom_display_brightness_automanual);
+  wm.addParameter(&custom_display_brightness_val);
+  wm.addParameter(&custom_display_colon_blink);
+  wm.addParameter(&custom_display_size);
 
+  wm.setBreakAfterConfig(true);
+
+  wm.setSaveConfigCallback(wifiSaveConfigCallback);
+  wm.setSaveParamsCallback(saveConfigCallback);
   RTC.begin();
   RTC.squareWave(DS3232RTC::SQWAVE_1_HZ);   // 1 Hz square wave
 
@@ -691,11 +1084,26 @@ void setup() {
   ntpAlarmCounter = NTP_FETCH_PERIOD - 2;  // trigger an NTP fetch on first-run
  
   wm.setHostname("NARVAL_CLOCK1");
-
-  WiFi.mode(WIFI_STA);
+  if(spiffs_DHCP[0] == '1')
+  {
+     WiFi.mode(WIFI_STA);
   WiFi.begin(spiffs_SSID,spiffs_PASSWORD);
   delay(5000);
   Serial << (F("IP address is ")) << WiFi.localIP() << endl;
+  }
+  else if(spiffs_DHCP[0] == 0)
+  {
+    // Set your Static IP address
+    IPAddress local_IP(192, 168, 1, 184);
+    // Set your Gateway IP address
+    IPAddress gateway(192, 168, 1, 1);
+
+    IPAddress subnet(255, 255, 0, 0);
+    IPAddress primaryDNS(8, 8, 8, 8);   //optional
+    IPAddress secondaryDNS(8, 8, 4, 4); //optional
+  }
+
+ 
 
   ntpClient.begin(UDP_LISTEN_PORT);
 
@@ -707,6 +1115,8 @@ void setup() {
 
   // the RTC Interrupt output is open collector so set the pullup resistor on the interrupt pin
   pinMode(RTC_INTERRUPT_PIN, INPUT_PULLUP);
+  led.setPixelColor(0, led.Color(0, 8, 0));
+  led.show();  
 }// END OF setup
 
 /********/
@@ -724,6 +1134,58 @@ uint32_t rtcSetDelay = 0;
 uint8_t ntpFailCounter = 0;
 bool connected = false;
 void loop() {
+
+   if (shouldSaveConfig) {
+    Serial.println("saving config");
+    strcpy(spiffs_DHCP,                   custom_dhcp.getValue());
+    strcpy(spiffs_IP_ADDR,                custom_ip_addr.getValue());
+    strcpy(spiffs_IP_GATE,                custom_ip_gate.getValue());
+    strcpy(spiffs_IP_MASK,                custom_ip_mask.getValue());
+    strcpy(spiffs_IP_ACCESS,              custom_ip_access.getValue());
+    strcpy(spiffs_AP_TIMEOUT,             custom_ap_timeout.getValue());
+    strcpy(spiffs_NTP_IP,                 custom_ntp_ip.getValue());
+    strcpy(spiffs_NTP_URL,                custom_ntp_url.getValue());
+    strcpy(spiffs_NTP_DAYLIGHT,           custom_ntp_daylight.getValue());
+    strcpy(spiffs_NTP_TIMEZONE,           custom_ntp_timezone.getValue());
+    strcpy(spiffs_NTP_GPSENABLE,          custom_ntp_gpsenable.getValue());
+    strcpy(spiffs_BRIGHTNESS_AUTOMANUAL,  custom_display_brightness_automanual.getValue());
+    strcpy(spiffs_BRIGHTNESS_VAL,         custom_display_brightness_val.getValue());
+    strcpy(spiffs_COLON_BLINK,            custom_display_colon_blink.getValue());
+    strcpy(spiffs_DISPLAY_SIZE,           custom_display_size.getValue());
+    DynamicJsonDocument json(1024);
+    Serial.print("ip add is ip?");
+    Serial.println( isIp( (String)spiffs_IP_ADDR ) );
+
+
+    json["SSID"] = spiffs_SSID;
+    json["PASSWORD"] = spiffs_PASSWORD;
+    json["DHCP_ONOFF"] = spiffs_DHCP;
+    json["STATIC_IP_ADD"] = spiffs_IP_ADDR;
+    json["STATIC_DEF_GATE"] = spiffs_IP_GATE;
+    json["STATIC_SUBNET"] = spiffs_IP_MASK;
+    json["ACCESS_POINT_IP"] = spiffs_IP_ACCESS;
+    json["ACCESS_POINT_TIMEOUT"] = spiffs_AP_TIMEOUT;
+    json["NTP_ADD"] = spiffs_NTP_IP;
+    json["NTP_URL"] = spiffs_NTP_URL;
+    json["NTP_DAYLIGHTSAVINGS"] = spiffs_NTP_DAYLIGHT;
+    json["NTP_TIMEZONE"] = spiffs_NTP_TIMEZONE;
+    json["NTP_GPSENABLE"] = spiffs_NTP_GPSENABLE;
+    json["BRIGHTNESS_AUTOMANUAL"] = spiffs_BRIGHTNESS_AUTOMANUAL;
+    json["BRIGHTNESS_VAL"] = spiffs_BRIGHTNESS_VAL;
+    json["DISPLAY_COLON_BLINK"] = spiffs_COLON_BLINK;
+    json["DISPLAY_SIZE"] = spiffs_DISPLAY_SIZE;
+
+    File configFile = SPIFFS.open("/config.json", "w");
+    if (!configFile) {
+      Serial.println("failed to open config file for writing");
+    }
+    serializeJson(json, Serial);
+    serializeJson(json, configFile);
+    configFile.close();
+    //end save
+    shouldSaveConfig = false;
+  }
+  
   
   if (WiFi.status() == WL_CONNECTED && !connected) {
     
@@ -743,7 +1205,7 @@ void loop() {
 
       
       wm.setConfigPortalBlocking(false);
-      wm.startConfigPortal("Frissházasok");
+      wm.startConfigPortal("NARVAL_CLOCK");
     } else {
       Serial.println("Button Pressed, Starting Web Portal");
       wm.startWebPortal();
@@ -830,9 +1292,16 @@ void loop() {
     
     if(halfSec)
     {
-        
-      display.showNumberDecEx(num,0b01000000,false,4,0);
-      memset(displayData,0x00,128);
+      if(spiffs_COLON_BLINK[0] == '1')
+      {
+        display.showNumberDecEx(num,0b01000000,false,4,0);
+      }
+      else
+      {
+        display.showNumberDecEx(num,0b01000000,false,4,0);
+      }
+      
+      memset(displayData,0x00,144*2);
 
       // WriteChar((tm.Hour/10)+0x30,0,0, 1);
       // WriteChar((tm.Hour%10)+0x30,7,0, 1);
@@ -842,8 +1311,8 @@ void loop() {
       // WriteChar(':',35,0, 1);
       // WriteChar((tm.Second/10)+0x30,42,0, 1);
       // WriteChar((tm.Second%10)+0x30,49,0, 1);
-      WriteBigChar((tm.Minute/10)+0x30,0,0,1);
-      WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+      /*WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      WriteBiggerChar((tm.Minute%10)+0x30,16,0,1);
       drawPixel(31, 11, 1);
       drawPixel(31, 10, 1);
       drawPixel(32, 11, 1);
@@ -853,8 +1322,27 @@ void loop() {
       drawPixel(31, 4, 1);
       drawPixel(32, 5, 1);
       drawPixel(32, 4, 1);
-      WriteBigChar((tm.Second/10)+0x30,35,0,1);
-      WriteBigChar((tm.Second%10)+0x30,51,0,1);
+      WriteBiggerChar((tm.Second/10)+0x30,35,0,1);
+      WriteBiggerChar((tm.Second%10)+0x30,51,0,1);
+      //2x2 display
+      */
+      WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
+      drawPixel(31, 11, 1);
+      drawPixel(31, 10, 1);
+      drawPixel(32, 11, 1);
+      drawPixel(32, 10, 1);
+
+      drawPixel(31, 5, 1);
+      drawPixel(31, 4, 1);
+      drawPixel(32, 5, 1);
+      drawPixel(32, 4, 1);
+      WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
+      WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+
+
+
+
       // uint32_t temp = 0x24242424;
       // uint32_t temp2 = 0x24242424;
       // for(int i = 0;i<32;i++)
@@ -879,7 +1367,7 @@ void loop() {
     else
     {
      //display.showNumberDecEx(num,0b01000000,false,4,0);
-      memset(displayData,0x00,128);
+      memset(displayData,0x00,144*2);
 
       // WriteChar((tm.Hour/10)+0x30,0,0, 1);
       // WriteChar((tm.Hour%10)+0x30,7,0, 1);
@@ -889,9 +1377,25 @@ void loop() {
       // WriteChar(':',35,0, 1);
       // WriteChar((tm.Second/10)+0x30,42,0, 1);
       // WriteChar((tm.Second%10)+0x30,49,0, 1);
-      WriteBigChar((tm.Minute/10)+0x30,0,0,1);
-      WriteBigChar((tm.Minute%10)+0x30,16,0,1);
-      drawPixel(31, 11, 0);
+
+      /*WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      WriteBiggerChar((tm.Minute%10)+0x30,16,0,1);
+      drawPixel(31, 11, 1);
+      drawPixel(31, 10, 1);
+      drawPixel(32, 11, 1);
+      drawPixel(32, 10, 1);
+
+      drawPixel(31, 5, 1);
+      drawPixel(31, 4, 1);
+      drawPixel(32, 5, 1);
+      drawPixel(32, 4, 1);
+      WriteBiggerChar((tm.Second/10)+0x30,35,0,1);
+      WriteBiggerChar((tm.Second%10)+0x30,51,0,1);
+      //2x2 display
+      */
+      WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
+      drawPixel(45, 7, 0);
       drawPixel(31, 10, 0);
       drawPixel(32, 11, 0);
       drawPixel(32, 10, 0);
@@ -900,8 +1404,8 @@ void loop() {
       drawPixel(31, 4, 0);
       drawPixel(32, 5, 0);
       drawPixel(32, 4, 0);
-      WriteBigChar((tm.Second/10)+0x30,35,0,1);
-      WriteBigChar((tm.Second%10)+0x30,51,0,1);
+      WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
+      WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
       // uint32_t temp = 0x24242424;
       // uint32_t temp2 = 0x24242424;
       // for(int i = 0;i<32;i++)
@@ -921,7 +1425,15 @@ void loop() {
         
       // }
       sendDisplay();
-      display.showNumberDecEx(num,0,false,4,0);
+      if(spiffs_COLON_BLINK[0] == '1')
+      {
+        display.showNumberDecEx(num,0,false,4,0);
+      }
+      else
+      {
+        display.showNumberDecEx(num,0b01000000,false,4,0);
+      }
+      
     }
     
 
