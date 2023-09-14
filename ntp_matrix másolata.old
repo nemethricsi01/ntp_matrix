@@ -1272,25 +1272,21 @@ void setup() {
   wm.setHostname("NARVAL_CLOCK1");
   if(spiffs_DHCP[0] == '1')
   {
-  
+     WiFi.mode(WIFI_STA);
+  WiFi.begin(spiffs_SSID,spiffs_PASSWORD);
+  delay(5000);
+  Serial << (F("IP address is ")) << WiFi.localIP() << endl;
   }
   else if(spiffs_DHCP[0] == '0')
   {
     // Set your Static IP address
-    IPAddress local_IP;
-    local_IP.fromString(spiffs_IP_ADDR);
+    IPAddress local_IP(spiffs_IP_ADDR.toString());
     // Set your Gateway IP address
-    IPAddress gateway;
-    gateway.fromString("192.168.2.1");;
+    IPAddress gateway(spiffs_IP_GATE.toString());
 
-    IPAddress subnet(255,255,255,0);
+    IPAddress subnet(255, 255, 0, 0);
     IPAddress primaryDNS(8, 8, 8, 8);   //optional
     IPAddress secondaryDNS(8, 8, 4, 4); //optional
-  WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(spiffs_SSID,spiffs_PASSWORD);
-  delay(5000);
-  Serial << (F("IP address is ")) << WiFi.localIP() << endl;
   }
 
  
