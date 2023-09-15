@@ -617,7 +617,24 @@ static const uint16_t Font7x10 [] = {
 0x3000, 0x1000, 0x1000, 0x1000, 0x0800, 0x0800, 0x1000, 0x1000, 0x1000, 0x3000,  // }
 0x0000, 0x0000, 0x0000, 0x7400, 0x4C00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // ~
 };
-
+uint8_t font7seg[] = {
+0x77,//0
+0x14,//1
+0xB3,//2
+0xB6,//3
+0xd4,//4
+0xe6,//5
+0xe7,//6
+0x34,//7
+0xf7,//8
+0xf6,//9
+0x83,//c
+0x97,//d
+0xc5,//h
+0x41,//i
+0x85,//n
+0xf1//p
+};
 
 #define DEBUG true      // change to false to stop Serial output if you use a display such as LED or LCD
 #include <FS.h>                   //this needs to be first, or it all crashes and burns...
@@ -637,8 +654,8 @@ static const uint16_t Font7x10 [] = {
 #include <Adafruit_NeoPixel.h>
 
 #define TRIGGER_PIN 0
-#define CLK 21
-#define DIO 20
+#define CLK 16
+#define DIO 15
 #define PWMPIN 7
 #define RTC_INTERRUPT_PIN 9 // interrupt on GPIO 12
 #define LATCHPIN 14
@@ -1014,6 +1031,25 @@ void sendDisplay(void)
   digitalWrite(LATCHPIN, 0);
   digitalWrite(OEPIN, 0);
 }
+void sendSevenSeg ( void )
+{
+  vspi->beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
+  /*
+  display is filled from left to right so in order to write to the left digit i have 
+  to send out that last(before the dots because they are the last)
+  */
+  vspi->transfer(sevenSegBuff[3]);//rightmost digit
+  vspi->transfer(sevenSegBuff[2]);//2nd from the right
+  vspi->transfer(sevenSegBuff[1]);//3rd from the right
+  vspi->transfer(sevenSegBuff[0]);//4th from the right
+  vspi->transfer(sevenSegBuff[4]);//dots, from the top: 0b11100000, msb is the upper dot
+
+  vspi->endTransaction();
+  digitalWrite(LATCHPIN, LOW); 
+  digitalWrite(LATCHPIN, HIGH);
+  delay(1); 
+  digitalWrite(LATCHPIN, LOW); 
+}
 char WriteChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
     uint32_t i, b, j;
     
@@ -1109,6 +1145,40 @@ char WriteBiggerChar(char ch, uint8_t x,uint8_t y,uint8_t color) {
         }
     }
     return ch;
+}
+void writeChar7Seg(char ch, uint8_t pos)
+{
+  if(pos > 4)
+  {
+    return;
+  }
+  sevenSegBuff[pos] = font7seg[ch-0x30];
+  sendSevenSeg();
+}
+void dispTest ( void )
+{
+  for(int x = 0; x< 4; x++)
+  {
+    memset(sevenSegBuff, 0, sizeof(sevenSegBuff));
+    writeChar7Seg('8', x);
+    delay(500);
+  }
+  for(int i = 0;i<8;i++)
+  {
+  vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
+  vspi->transfer(1<<i);
+  vspi->transfer(1<<i);
+  vspi->transfer(1<<i);
+  vspi->transfer(1<<i);
+  vspi->transfer(1<<i);
+
+  vspi->endTransaction();
+  digitalWrite(LATCHPIN, LOW); 
+  digitalWrite(LATCHPIN, HIGH);
+  delay(1); 
+  digitalWrite(LATCHPIN, LOW); 
+  delay(500);
+  }
 }
 
 void saveConfig (void)
@@ -1281,15 +1351,21 @@ void setup() {
     local_IP.fromString(spiffs_IP_ADDR);
     // Set your Gateway IP address
     IPAddress gateway;
-    gateway.fromString("192.168.2.1");;
+    gateway.fromString(spiffs_IP_GATE);
 
-    IPAddress subnet(255,255,255,0);
+    IPAddress subnet;
+    subnet.fromString(spiffs_IP_MASK);
     IPAddress primaryDNS(8, 8, 8, 8);   //optional
     IPAddress secondaryDNS(8, 8, 4, 4); //optional
   WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);
   WiFi.mode(WIFI_STA);
   WiFi.begin(spiffs_SSID,spiffs_PASSWORD);
-  delay(5000);
+  delay(2000);
+  while( ( WiFi.status() != WL_CONNECTED ) && ( retryCounter < 5) )
+  {
+    delay(5000);
+  }
+  
   Serial << (F("IP address is ")) << WiFi.localIP() << endl;
   }
 
@@ -1347,14 +1423,17 @@ void loop() {
   wm.process(); // do processing
 
   // is configuration portal requested?
-  if(digitalRead(TRIGGER_PIN) == LOW && (!portalRunning)) {
-    if(startAP){
+  if(digitalRead(TRIGGER_PIN) == LOW && (!portalRunning)) 
+  {
+    if(startAP)
+    {
       Serial.println("Button Pressed, Starting Config Portal");
 
       
       wm.setConfigPortalBlocking(false);
       wm.startConfigPortal("NARVAL_CLOCK");
-    } else {
+    } else 
+    {
       Serial.println("Button Pressed, Starting Web Portal");
       wm.startWebPortal();
     }  
