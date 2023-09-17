@@ -670,6 +670,7 @@ uint8_t font7seg[] = {
 
 #define BLOCKSX     4
 Adafruit_NeoPixel led(1, 48, NEO_GRB + NEO_KHZ800);
+uint8_t sevenSegBuff[5];
 
 char spiffs_SSID[30] = "GMPuc6";
 char spiffs_PASSWORD[30] = "75000000";
@@ -746,6 +747,7 @@ char ntpip[40] = {'0','0','0','0','0','0','0','0','0','0',
                   '0','0','0','0','0','0','0','0','0','0',
                   '0','0','0','0','0','0','0','0','0','0'};
 int datacounter = 0;
+int retryCounter;
 // ISR variables
 volatile uint32_t sysClock, ntpAlarmCounter; // the actual clock reference & fraction in millis
 volatile bool outputTimestampEnable = false;  // used to trigger output of the current time
@@ -1165,7 +1167,7 @@ void dispTest ( void )
   }
   for(int i = 0;i<8;i++)
   {
-  vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
+  vspi->beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
   vspi->transfer(1<<i);
   vspi->transfer(1<<i);
   vspi->transfer(1<<i);
@@ -1236,7 +1238,8 @@ Serial.println("saving config");
 /*********/
 void setup() {
   
-  
+  pinMode(17, INPUT);
+  pinMode(18, INPUT);
   display.setBrightness(7,true);
   
   WiFi.disconnect();
@@ -1381,6 +1384,7 @@ void setup() {
 
   // the RTC Interrupt output is open collector so set the pullup resistor on the interrupt pin
   pinMode(RTC_INTERRUPT_PIN, INPUT_PULLUP);
+  
   led.setPixelColor(0, led.Color(0, 8, 0));
   led.show();  
 }// END OF setup
