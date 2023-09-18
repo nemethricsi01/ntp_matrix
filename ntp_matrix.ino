@@ -709,25 +709,25 @@ uint8_t ntpFailCounter = 0;
 bool connected = false;
 
 
-WiFiManagerParameter custom_ipconfig_text("<b><center>IP CONFIGURATION</center></b>");  //////////////////////////////////////////
-WiFiManagerParameter custom_dhcp("dhcp", "DHCP settings:(1:on,0:off)", spiffs_DHCP, 40);
-WiFiManagerParameter custom_ip_addr("ip_addr", "Static ip address(only valid if dhcp = 0)", spiffs_IP_ADDR, 40);
-WiFiManagerParameter custom_ip_gate("ip_gate", "Static gateway address(only valid if dhcp = 0)", spiffs_IP_GATE, 40);
-WiFiManagerParameter custom_ip_mask("ip_mask", "Static subnet mask(only valid if dhcp = 0)", spiffs_IP_MASK, 40);
-WiFiManagerParameter custom_ip_access("ip_access", "Access point ip address", spiffs_IP_ACCESS, 40);
-WiFiManagerParameter custom_ap_timeout("ap_timeout", "Access point timeout x10sec (max 255)", spiffs_AP_TIMEOUT, 40);
-WiFiManagerParameter custom_ntpconfig_text("<b><center>NTP CONFIGURATION</center></b>");  //////////////////////////////////////////
-WiFiManagerParameter custom_ntp_ip("ntp_ip", "NTP ip server address", spiffs_NTP_IP, 40);
-WiFiManagerParameter custom_ntp_url("ntp_url", "NTP url(only valid if ip is set to 0)", spiffs_NTP_URL, 40);
-WiFiManagerParameter custom_daylightsavings_helper("<p>daylight savings options:CEST CET CE</p>");                                                           //////////////////////////////////////////
-WiFiManagerParameter custom_daylightsavings_helper2("<p>CEST: Central European Summer time CET: Central European Standard Time  CE: Automatic change</p>");  //////////////////////////////////////////
-WiFiManagerParameter custom_ntp_timezone("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
-WiFiManagerParameter custom_ntp_gpsenable("ntp_tgpsenable", "GPS enable:(1:on,0:off)", spiffs_NTP_GPSENABLE, 5);
-WiFiManagerParameter custom_display_config_text("<b><center>DISPLAY CONFIGURATION</center></b>");  ////////////////////////////////////
-WiFiManagerParameter custom_display_brightness_automanual("display_brightness_automanual", "Display brightness setup(auto/manual)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
-WiFiManagerParameter custom_display_brightness_val("display_brightness_val", "Display brightness set(1-255),(auto-> max val)", spiffs_BRIGHTNESS_VAL, 40);
-WiFiManagerParameter custom_display_colon_blink("display_colon_blink", "Display colon(double dot) blink:(1:on,0:off)", spiffs_COLON_BLINK, 40);
-WiFiManagerParameter custom_display_size("display_size", "Display size (16,32,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
+WiFiManagerParameter custom_ipconfig_text                 ("<b><center>IP CONFIGURATION</center></b>");//////////////////////////////////////////
+WiFiManagerParameter custom_dhcp                          ("dhcp", "DHCP settings:(1:on,0:off)", spiffs_DHCP, 40);
+WiFiManagerParameter custom_ip_addr                       ("ip_addr", "Static ip address(only valid if dhcp = 0)", spiffs_IP_ADDR, 40);
+WiFiManagerParameter custom_ip_gate                       ("ip_gate", "Static gateway address(only valid if dhcp = 0)", spiffs_IP_GATE, 40);
+WiFiManagerParameter custom_ip_mask                       ("ip_mask", "Static subnet mask(only valid if dhcp = 0)", spiffs_IP_MASK, 40);
+WiFiManagerParameter custom_ip_access                     ("ip_access", "Access point ip address", spiffs_IP_ACCESS, 40);
+WiFiManagerParameter custom_ap_timeout                    ("ap_timeout", "Access point timeout x10sec (max 255)", spiffs_AP_TIMEOUT, 40);
+WiFiManagerParameter custom_ntpconfig_text                ("<b><center>NTP CONFIGURATION</center></b>");//////////////////////////////////////////
+WiFiManagerParameter custom_ntp_ip                        ("ntp_ip", "NTP ip server address", spiffs_NTP_IP, 40);
+WiFiManagerParameter custom_ntp_url                       ("ntp_url", "NTP url(only valid if ip is set to 0)", spiffs_NTP_URL, 40);
+WiFiManagerParameter custom_daylightsavings_helper        ("<p>daylight savings options:CEST CET CE</p>");//////////////////////////////////////////
+WiFiManagerParameter custom_daylightsavings_helper2       ("<p>CEST: Central European Summer time CET: Central European Standard Time  CE: Automatic change</p>");//////////////////////////////////////////
+WiFiManagerParameter custom_ntp_timezone                  ("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
+WiFiManagerParameter custom_ntp_gpsenable                 ("ntp_tgpsenable", "GPS enable:(1:on,0:off)", spiffs_NTP_GPSENABLE, 5);
+WiFiManagerParameter custom_display_config_text           ("<b><center>DISPLAY CONFIGURATION</center></b>");////////////////////////////////////
+WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto: 0/manua: l)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
+WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-100%)", spiffs_BRIGHTNESS_VAL, 40);
+WiFiManagerParameter custom_display_colon_blink           ("display_colon_blink", "Display colon(double dot) blink:(1:on,0:off)", spiffs_COLON_BLINK, 40);
+WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,32,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
 
 bool shouldSaveConfig = false;
 bool shouldSaveWifiConfig = false;
@@ -758,6 +758,8 @@ volatile uint32_t sysClock, ntpAlarmCounter;  // the actual clock reference & fr
 volatile bool outputTimestampEnable = false;  // used to trigger output of the current time
 volatile bool halfSec = false;
 
+int dispBrightness = 128;
+int dispBrightnessPercent = 50;
 
 
 WiFiManager wm;
@@ -1179,25 +1181,29 @@ void showStatus(uint8_t status) {
   }
 }
 void saveConfig(void) {
-  Serial.println("saving config");
-  strcpy(spiffs_DHCP, custom_dhcp.getValue());
-  strcpy(spiffs_IP_ADDR, custom_ip_addr.getValue());
-  strcpy(spiffs_IP_GATE, custom_ip_gate.getValue());
-  strcpy(spiffs_IP_MASK, custom_ip_mask.getValue());
-  strcpy(spiffs_IP_ACCESS, custom_ip_access.getValue());
-  strcpy(spiffs_AP_TIMEOUT, custom_ap_timeout.getValue());
-  strcpy(spiffs_NTP_IP, custom_ntp_ip.getValue());
-  strcpy(spiffs_NTP_URL, custom_ntp_url.getValue());
-  strcpy(spiffs_NTP_TIMEZONE, custom_ntp_timezone.getValue());
-  strcpy(spiffs_NTP_GPSENABLE, custom_ntp_gpsenable.getValue());
-  strcpy(spiffs_BRIGHTNESS_AUTOMANUAL, custom_display_brightness_automanual.getValue());
-  strcpy(spiffs_BRIGHTNESS_VAL, custom_display_brightness_val.getValue());
-  strcpy(spiffs_COLON_BLINK, custom_display_colon_blink.getValue());
-  strcpy(spiffs_DISPLAY_SIZE, custom_display_size.getValue());
-  DynamicJsonDocument json(1024);
+
   Serial.print("ip add is ip?");
   Serial.println(isIp((String)spiffs_IP_ADDR));
-
+  DynamicJsonDocument json(1024);
+  strcpy(spiffs_DISPLAY_SIZE, custom_display_size.getValue());
+  strcpy(spiffs_BRIGHTNESS_VAL, custom_display_brightness_val.getValue());
+  strcpy(spiffs_COLON_BLINK, custom_display_colon_blink.getValue());
+  strcpy(spiffs_BRIGHTNESS_AUTOMANUAL, custom_display_brightness_automanual.getValue());
+  strcpy(spiffs_NTP_GPSENABLE, custom_ntp_gpsenable.getValue());
+  strcpy(spiffs_NTP_URL, custom_ntp_url.getValue());
+  strcpy(spiffs_NTP_TIMEZONE, custom_ntp_timezone.getValue());
+  strcpy(spiffs_NTP_IP, custom_ntp_ip.getValue());
+  strcpy(spiffs_AP_TIMEOUT, custom_ap_timeout.getValue());
+  strcpy(spiffs_IP_ACCESS, custom_ip_access.getValue());
+  strcpy(spiffs_IP_MASK, custom_ip_mask.getValue());
+  strcpy(spiffs_IP_GATE, custom_ip_gate.getValue());
+  strcpy(spiffs_IP_ADDR, custom_ip_addr.getValue());
+  strcpy(spiffs_DHCP, custom_dhcp.getValue());
+  Serial.println("saving config");
+void setBrightness(int percent)
+{
+  ledcWrite(4, map(percent,100,0,0,255));
+}
 
   json["SSID"] = spiffs_SSID;
   json["PASSWORD"] = spiffs_PASSWORD;
@@ -1544,16 +1550,31 @@ void loop() {
     }
     sprintf(buff, "%02u:%02u:%02u %s  %02u-%s-20%02u", tm.Hour, tm.Minute, tm.Second, weekdays[tm.Wday], tm.Day, months[tm.Month], tm.Year - 30);
     int num;
-    num = tm.Minute * 100;
-    num += tm.Second;
-
-    if (halfSec) {
-      if (spiffs_COLON_BLINK[0] == '1') 
+    num = tm.Minute*100;
+    num+= tm.Second;
+    int analogVal = map(analogRead(8),0,4096,0,255);
+    if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '1')
+    {
+      String brightnessval = String(spiffs_BRIGHTNESS_VAL);
+      setBrightness(brightnessval.toInt());
+    }
+    if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '0')
+    {
+    
+    setBrightness(map(analogVal,255,30,10,100));
+    }
+    
+    
+    display.showNumberDecEx(analogVal,0,false,4,0);
+    if(halfSec)
+    {
+      if(spiffs_COLON_BLINK[0] == '1')
       {
-        display.showNumberDecEx(num, 0b01000000, false, 4, 0);
-      } else 
+        //display.showNumberDecEx(num,0b01000000,false,4,0);
+      }
+      else
       {
-        display.showNumberDecEx(num, 0b01000000, false, 4, 0);
+        //display.showNumberDecEx(num,0b01000000,false,4,0);
       }
 
       memset(displayData, 0x00, 144 * 2);
@@ -1581,20 +1602,30 @@ void loop() {
       WriteBiggerChar((tm.Second%10)+0x30,51,0,1);
       //2x2 display
       */
-      WriteBiggerChar((tm.Minute / 10) + 0x30, 0, 0, 1);
-      WriteBiggerChar((tm.Minute % 10) + 0x30, 23, 0, 1);
-      for (int y = 15; y < 18; y++) {
-        for (int x = 45; x < 51; x++) {
-          drawPixel(x, y, 1);
-        }
-      }
-      for (int y = 6; y < 9; y++) {
-        for (int x = 45; x < 51; x++) {
-          drawPixel(x, y, 1);
-        }
-      }
-      WriteBiggerChar((tm.Second / 10) + 0x30, 55, 0, 1);
-      WriteBiggerChar((tm.Second % 10) + 0x30, 78, 0, 1);
+      // WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      // WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
+      // for(int y = 15; y <18;y++)
+      //  {
+      //   for(int x = 45; x<51;x++)
+      //   {
+      //     drawPixel(x, y, 1);
+      //   }
+      //  }
+      //  for(int y = 6; y <9;y++)
+      //  {
+      //   for(int x = 45; x<51;x++)
+      //   {
+      //     drawPixel(x, y, 1);
+      //   }
+      //  }
+      // WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
+      // WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+        //3*3 display
+        writeChar7Seg((tm.Minute/10)+0x30, 0);
+        writeChar7Seg((tm.Minute%10)+0x30, 1);
+        writeChar7Seg((tm.Second/10)+0x30, 2);
+        writeChar7Seg((tm.Second%10)+0x30, 3);
+
 
 
 
@@ -1617,7 +1648,13 @@ void loop() {
       //   }
 
       // }
-      sendDisplay();
+      //sendDisplay();
+      
+    }
+    else
+    {
+     //display.showNumberDecEx(num,0b01000000,false,4,0);
+      memset(displayData,0x00,144*2);
 
     } else {
       //display.showNumberDecEx(num,0b01000000,false,4,0);
@@ -1647,12 +1684,21 @@ void loop() {
       WriteBiggerChar((tm.Second%10)+0x30,51,0,1);
       //2x2 display
       */
-      WriteBiggerChar((tm.Minute / 10) + 0x30, 0, 0, 1);
-      WriteBiggerChar((tm.Minute % 10) + 0x30, 23, 0, 1);
+      // WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      // WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
 
 
-      WriteBiggerChar((tm.Second / 10) + 0x30, 55, 0, 1);
-      WriteBiggerChar((tm.Second % 10) + 0x30, 78, 0, 1);
+      // WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
+      // WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+      //3x3 display
+
+
+        writeChar7Seg((tm.Minute/10)+0x30, 0);
+        writeChar7Seg((tm.Minute%10)+0x30, 1);
+        writeChar7Seg((tm.Second/10)+0x30, 2);
+        writeChar7Seg((tm.Second%10)+0x30, 3);
+
+
       // uint32_t temp = 0x24242424;
       // uint32_t temp2 = 0x24242424;
       // for(int i = 0;i<32;i++)
@@ -1671,12 +1717,16 @@ void loop() {
       //   }
 
       // }
-      sendDisplay();
-      if (spiffs_COLON_BLINK[0] == '1') {
-        display.showNumberDecEx(num, 0, false, 4, 0);
-      } else {
-        display.showNumberDecEx(num, 0b01000000, false, 4, 0);
+      //sendDisplay();
+      if(spiffs_COLON_BLINK[0] == '1')
+      {
+        //display.showNumberDecEx(num,0,false,4,0);
       }
+      else
+      {
+        //display.showNumberDecEx(num,0b01000000,false,4,0);
+      }
+      
     }
 
 
