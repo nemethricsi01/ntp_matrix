@@ -719,8 +719,8 @@ WiFiManagerParameter custom_daylightsavings_helper2       ("<p>CEST: Central Eur
 WiFiManagerParameter custom_ntp_timezone                  ("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
 WiFiManagerParameter custom_ntp_gpsenable                 ("ntp_tgpsenable", "GPS enable:(1:on,0:off)", spiffs_NTP_GPSENABLE, 5);
 WiFiManagerParameter custom_display_config_text           ("<b><center>DISPLAY CONFIGURATION</center></b>");////////////////////////////////////
-WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto/manual)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
-WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-255),(auto-> max val)", spiffs_BRIGHTNESS_VAL, 40);
+WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto: 0/manua: l)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
+WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-100%)", spiffs_BRIGHTNESS_VAL, 40);
 WiFiManagerParameter custom_display_colon_blink           ("display_colon_blink", "Display colon(double dot) blink:(1:on,0:off)", spiffs_COLON_BLINK, 40);
 WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,32,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
 
@@ -753,6 +753,8 @@ volatile uint32_t sysClock, ntpAlarmCounter; // the actual clock reference & fra
 volatile bool outputTimestampEnable = false;  // used to trigger output of the current time
 volatile bool halfSec = false;
 
+int dispBrightness = 128;
+int dispBrightnessPercent = 50;
 
 
 WiFiManager wm;
@@ -1182,7 +1184,10 @@ void dispTest ( void )
   delay(500);
   }
 }
-
+void setBrightness(int percent)
+{
+  ledcWrite(4, map(percent,100,0,0,255));
+}
 void saveConfig (void)
 {
 Serial.println("saving config");
@@ -1345,7 +1350,8 @@ void setup() {
   wm.setHostname("NARVAL_CLOCK1");
   if(spiffs_DHCP[0] == '1')
   {
-  
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(spiffs_SSID,spiffs_PASSWORD);
   }
   else if(spiffs_DHCP[0] == '0')
   {
@@ -1531,16 +1537,29 @@ void loop() {
     int num;
     num = tm.Minute*100;
     num+= tm.Second;
+    int analogVal = map(analogRead(8),0,4096,0,255);
+    if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '1')
+    {
+      String brightnessval = String(spiffs_BRIGHTNESS_VAL);
+      setBrightness(brightnessval.toInt());
+    }
+    if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '0')
+    {
     
+    setBrightness(map(analogVal,255,30,10,100));
+    }
+    
+    
+    display.showNumberDecEx(analogVal,0,false,4,0);
     if(halfSec)
     {
       if(spiffs_COLON_BLINK[0] == '1')
       {
-        display.showNumberDecEx(num,0b01000000,false,4,0);
+        //display.showNumberDecEx(num,0b01000000,false,4,0);
       }
       else
       {
-        display.showNumberDecEx(num,0b01000000,false,4,0);
+        //display.showNumberDecEx(num,0b01000000,false,4,0);
       }
       
       memset(displayData,0x00,144*2);
@@ -1568,24 +1587,30 @@ void loop() {
       WriteBiggerChar((tm.Second%10)+0x30,51,0,1);
       //2x2 display
       */
-      WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
-      WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
-      for(int y = 15; y <18;y++)
-       {
-        for(int x = 45; x<51;x++)
-        {
-          drawPixel(x, y, 1);
-        }
-       }
-       for(int y = 6; y <9;y++)
-       {
-        for(int x = 45; x<51;x++)
-        {
-          drawPixel(x, y, 1);
-        }
-       }
-      WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
-      WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+      // WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      // WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
+      // for(int y = 15; y <18;y++)
+      //  {
+      //   for(int x = 45; x<51;x++)
+      //   {
+      //     drawPixel(x, y, 1);
+      //   }
+      //  }
+      //  for(int y = 6; y <9;y++)
+      //  {
+      //   for(int x = 45; x<51;x++)
+      //   {
+      //     drawPixel(x, y, 1);
+      //   }
+      //  }
+      // WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
+      // WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+        //3*3 display
+        writeChar7Seg((tm.Minute/10)+0x30, 0);
+        writeChar7Seg((tm.Minute%10)+0x30, 1);
+        writeChar7Seg((tm.Second/10)+0x30, 2);
+        writeChar7Seg((tm.Second%10)+0x30, 3);
+
 
 
 
@@ -1608,7 +1633,7 @@ void loop() {
       //   }
         
       // }
-      sendDisplay();
+      //sendDisplay();
       
     }
     else
@@ -1640,12 +1665,21 @@ void loop() {
       WriteBiggerChar((tm.Second%10)+0x30,51,0,1);
       //2x2 display
       */
-      WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
-      WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
+      // WriteBiggerChar((tm.Minute/10)+0x30,0,0,1);
+      // WriteBiggerChar((tm.Minute%10)+0x30,23,0,1);
 
 
-      WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
-      WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+      // WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
+      // WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
+      //3x3 display
+
+
+        writeChar7Seg((tm.Minute/10)+0x30, 0);
+        writeChar7Seg((tm.Minute%10)+0x30, 1);
+        writeChar7Seg((tm.Second/10)+0x30, 2);
+        writeChar7Seg((tm.Second%10)+0x30, 3);
+
+
       // uint32_t temp = 0x24242424;
       // uint32_t temp2 = 0x24242424;
       // for(int i = 0;i<32;i++)
@@ -1664,14 +1698,14 @@ void loop() {
       //   }
         
       // }
-      sendDisplay();
+      //sendDisplay();
       if(spiffs_COLON_BLINK[0] == '1')
       {
-        display.showNumberDecEx(num,0,false,4,0);
+        //display.showNumberDecEx(num,0,false,4,0);
       }
       else
       {
-        display.showNumberDecEx(num,0b01000000,false,4,0);
+        //display.showNumberDecEx(num,0b01000000,false,4,0);
       }
       
     }
