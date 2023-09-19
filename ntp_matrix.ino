@@ -628,12 +628,17 @@ uint8_t font7seg[] = {
   0x34,  //7
   0xf7,  //8
   0xf6,  //9
-  0x83,  //c
-  0x97,  //d
-  0xc5,  //h
-  0x41,  //i
-  0x85,  //n
-  0xf1   //p
+  0x83,  //c 10
+  0x97,  //d 11
+  0xc5,  //h 12
+  0x41,  //i 13
+  0x85,  //n 14
+  0xf1,  //p 15
+  0x87,  //o 16
+  0x00,  //  17
+  0xff,   //  18 
+  0xf5,    // A 19
+  0x60    // kettospont 20
 };
 
 #define DEBUG true          // change to false to stop Serial output if you use a display such as LED or LCD
@@ -694,7 +699,7 @@ char spiffs_NTP_GPSENABLE[30] = "0";
 char spiffs_BRIGHTNESS_AUTOMANUAL[30] = "0";
 char spiffs_BRIGHTNESS_VAL[30] = "32";
 char spiffs_COLON_BLINK[30] = "1";
-char spiffs_DISPLAY_SIZE[30] = "32";
+char spiffs_DISPLAY_SIZE[40] = "32";
 
 
 #define MILLIS_MIN 2000UL                     // 2 seconds
@@ -724,7 +729,7 @@ WiFiManagerParameter custom_daylightsavings_helper2       ("<p>CEST: Central Eur
 WiFiManagerParameter custom_ntp_timezone                  ("ntp_timezone", "NTP timezone setting", spiffs_NTP_TIMEZONE, 40);
 WiFiManagerParameter custom_ntp_gpsenable                 ("ntp_tgpsenable", "GPS enable:(1:on,0:off)", spiffs_NTP_GPSENABLE, 5);
 WiFiManagerParameter custom_display_config_text           ("<b><center>DISPLAY CONFIGURATION</center></b>");////////////////////////////////////
-WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto: 0/manua: l)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
+WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto: 0/manual: 1)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
 WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-100%)", spiffs_BRIGHTNESS_VAL, 40);
 WiFiManagerParameter custom_display_colon_blink           ("display_colon_blink", "Display colon(double dot) blink:(1:on,0:off)", spiffs_COLON_BLINK, 40);
 WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,32,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
@@ -760,7 +765,7 @@ volatile bool halfSec = false;
 
 int dispBrightness = 128;
 int dispBrightnessPercent = 50;
-
+int ntpShouldUseIp = 0;
 
 WiFiManager wm;
 TM1637Display display(CLK, DIO);
@@ -768,6 +773,7 @@ DS3232RTC RTC;
 SPIClass* vspi = NULL;
 
 WiFiUDP ntpClient;
+IPAddress apip;
 
 boolean isIp(String str) {
   for (size_t i = 0; i < str.length(); i++) {
@@ -910,6 +916,7 @@ uint32_t readNtpBuffer(uint8_t* buff, uint8_t _start) {
 // an array of NTP servers. The specific server is specified by the index number
 // in the call to sendNTPrequest(uint8_t index)
 char* ntpServer = { "time.windows.com"};  // the NTP servers for testing
+IPAddress ntpServerIp;
 
 #define NTP_TIMEOUT 500            // maximum time to wait for an NTP server response in milliseconds
 #define NTP_ROUNDTRIP_MAX 200      // the maximinun NTP round-trip in milliseconds
@@ -933,8 +940,18 @@ uint32_t sendNTPrequest(uint8_t index)
   // send the NTP packet to the server
   ntpClient.flush();  // discard any previously received packet data
   ntpFraction = 0;
+  
   // send the packet and exit if error
-  if (!ntpClient.beginPacket(ntpServer, 123)) return 1;
+  if(ntpShouldUseIp == 0)
+  {
+    Serial.println(ntpServer);
+    if (!ntpClient.beginPacket(ntpServer, 123)) return 1;
+  }
+  else if(ntpShouldUseIp == 1)
+  {
+    if (!ntpClient.beginPacket(ntpServerIp, 123)) return 1;
+    Serial.println(ntpServerIp);
+  }
   ntpClient.write(packetBuffer, NTP_PACKET_SIZE);
   if (!ntpClient.endPacket()) return 2;
   // now wait for the response from the server
@@ -983,20 +1000,20 @@ void drawPixel(uint8_t x, uint8_t y, uint8_t color)
   if (y > 7) {
     if (y < 16) {
       y = y - 4;
-      xBlock += 40;  //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
+      if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == '8' ) )
+        {
+         xBlock += 40;  //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
+        }
+      if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+        {
+         xBlock += 24;  //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
+        }
     }
     if (y > 15) {
       y = y - 8;
       xBlock += 80;  //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
     }
   }
-
-  // Serial.print("x:");Serial.print(x);
-  // Serial.print("y:");Serial.println(y);
-  // Serial.print("yHighOrLow:");Serial.print(yHighOrLow);
-  // Serial.print("ycalc:");Serial.println((y / 2));
-  // Serial.print("xBlock:");Serial.print(xBlock);
-  // Serial.print("xPos:");Serial.println(xPos);
   if (color)  //draw
   {
     if (yHighOrLow == 0) {
@@ -1018,6 +1035,18 @@ void sendDisplay(void) {
   vspi->beginTransaction(SPISettings(10000000, LSBFIRST, SPI_MODE0));
 
   for (int i = 0; i < 144; i++) {
+    vspi->transfer16(displayData[i]);
+  }
+  vspi->endTransaction();
+  digitalWrite(LATCHPIN, 1);
+  digitalWrite(LATCHPIN, 0);
+  digitalWrite(OEPIN, 0);
+}
+void sendDisplay16(void) {
+  digitalWrite(OEPIN, 1);
+  vspi->beginTransaction(SPISettings(10000000, LSBFIRST, SPI_MODE0));
+
+  for (int i = 0; i < 64; i++) {
     vspi->transfer16(displayData[i]);
   }
   vspi->endTransaction();
@@ -1180,6 +1209,122 @@ void showStatus(uint8_t status) {
       }
   }
 }
+void setBrightness(int percent)
+{
+  ledcWrite(4, map(percent,100,0,0,255));
+}
+void printApIp7Seg(void)
+{
+        writeChar7Seg(14+0x30, 0);//n
+        writeChar7Seg(16+0x30, 1);//o
+        writeChar7Seg(17+0x30, 2);//blank
+        writeChar7Seg(17+0x30, 3);//blank
+        delay(2000);
+        writeChar7Seg(10+0x30, 0);//c
+        writeChar7Seg(16+0x30, 1);//o
+        writeChar7Seg(14+0x30, 2);//n
+        writeChar7Seg(14+0x30, 3);//n
+        delay(2000);
+        writeChar7Seg(19+0x30, 0);//A
+        writeChar7Seg(15+0x30, 1);//P
+        writeChar7Seg(13+0x30, 2);//I
+        writeChar7Seg(15+0x30, 3);//P
+        delay(2000);
+        int num,hundred,ten;
+        num = apip[0];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        num = apip[1];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        num = apip[2];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        num = apip[3];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        Serial.println(apip[0]);
+}
+void printStaIp7Seg(void)
+{
+IPAddress ip = WiFi.localIP();
+        writeChar7Seg(11+0x30, 0);//d
+        writeChar7Seg(12+0x30, 1);//h
+        writeChar7Seg(10+0x30, 2);//c
+        writeChar7Seg(15+0x30, 3);//p
+        delay(2000);
+        int num,hundred,ten;
+        num = ip[0];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        num = ip[1];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        num = ip[2];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+        num = ip[3];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        writeChar7Seg(hundred+0x30, 0);//
+        writeChar7Seg(ten+0x30, 1);//
+        writeChar7Seg(num+0x30, 2);//
+        writeChar7Seg(17+0x30, 3);//
+        delay(2000);
+}
+
+
 void saveConfig(void) {
 
   Serial.print("ip add is ip?");
@@ -1200,10 +1345,7 @@ void saveConfig(void) {
   strcpy(spiffs_IP_ADDR, custom_ip_addr.getValue());
   strcpy(spiffs_DHCP, custom_dhcp.getValue());
   Serial.println("saving config");
-void setBrightness(int percent)
-{
-  ledcWrite(4, map(percent,100,0,0,255));
-}
+
 
   json["SSID"] = spiffs_SSID;
   json["PASSWORD"] = spiffs_PASSWORD;
@@ -1230,7 +1372,18 @@ void setBrightness(int percent)
   serializeJson(json, Serial);
   serializeJson(json, configFile);
   configFile.close();
-  //end save
+
+
+  if( ( spiffs_NTP_IP[0] == '0' ) && ( spiffs_NTP_IP[1] == 0 ))
+{
+  ntpShouldUseIp = 0;
+  ntpServer = spiffs_NTP_URL;
+}
+else if( isIp ( String ( spiffs_NTP_IP ) ) )
+{
+  ntpServerIp.fromString(spiffs_NTP_IP);
+  ntpShouldUseIp = 1;
+}
 }
 /**********************************************************************************************************************************************************/
 /* SETUP */
@@ -1340,9 +1493,26 @@ void setup() {
 //ntp server config
 if( ( spiffs_NTP_IP[0] == '0' ) && ( spiffs_NTP_IP[1] == 0 ))
 {
+  ntpShouldUseIp = 0;
   ntpServer = spiffs_NTP_URL;
 }
-IPAddress apip;
+else if( isIp ( String ( spiffs_NTP_IP ) ) )
+{
+  ntpServerIp.fromString(spiffs_NTP_IP);
+  ntpShouldUseIp = 1;
+}
+int analogVal = map(analogRead(8),0,4096,0,255);
+ if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '1')
+    {
+      String brightnessval = String(spiffs_BRIGHTNESS_VAL);
+      setBrightness(brightnessval.toInt());
+    }
+    if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '0')
+    {
+    
+    setBrightness(map(analogVal,255,30,10,100));
+    }
+
 apip.fromString(spiffs_IP_ACCESS);
 wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
 
@@ -1363,10 +1533,18 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
       wm.setConfigPortalBlocking(false);
       wm.startConfigPortal("NARVAL_CLOCK");
       Serial.println("Connection error, Starting Config Portal");
+      if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+      {
+      printApIp7Seg();
+      }
       delay(2000);
-    }
-    Serial << (F("IP address is ")) << WiFi.localIP() << endl;
-  } else if (spiffs_DHCP[0] == '0') 
+    }//retrycounter == 5 end
+    else if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+      {
+        printStaIp7Seg();
+      }
+  }//dhcp ip end 
+  else if (spiffs_DHCP[0] == '0') 
   {
     // Set your Static IP address
     IPAddress local_IP;
@@ -1393,10 +1571,20 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
       wm.setConfigPortalBlocking(false);
       wm.startConfigPortal("NARVAL_CLOCK");
       Serial.println("Connection error, Starting Config Portal");
+      
+      if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+      {
+        printApIp7Seg();
+      }
       delay(2000);
     }
+    else if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+      {
+        printStaIp7Seg();
+      }
+    
     Serial << (F("IP address is ")) << WiFi.localIP() << endl;
-  }
+  }//static ip end
   showStatus(STATUS_CONN_OK);
   delay(2000);
   RTC.begin();
@@ -1412,6 +1600,28 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
   // the RTC Interrupt output is open collector so set the pullup resistor on the interrupt pin
   pinMode(RTC_INTERRUPT_PIN, INPUT_PULLUP);
   showStatus(STATUS_RUNNING);
+
+
+
+
+  custom_dhcp.setValue( spiffs_DHCP,40); 
+  custom_ip_addr.setValue( spiffs_IP_ADDR,40); 
+  custom_ip_gate.setValue( spiffs_IP_GATE,40); 
+  custom_ip_mask.setValue( spiffs_IP_MASK,40); 
+  custom_ip_access.setValue( spiffs_IP_ACCESS,40); 
+  custom_ap_timeout.setValue( spiffs_AP_TIMEOUT,40); 
+
+  custom_ntp_ip.setValue( spiffs_NTP_IP,40); 
+  custom_ntp_url.setValue( spiffs_NTP_URL,40); 
+
+  custom_ntp_timezone.setValue( spiffs_NTP_TIMEZONE,40); 
+  custom_ntp_gpsenable.setValue( spiffs_NTP_GPSENABLE,40); 
+
+  custom_display_brightness_automanual.setValue( spiffs_BRIGHTNESS_AUTOMANUAL,40); 
+  custom_display_brightness_val.setValue( spiffs_BRIGHTNESS_VAL,40); 
+  custom_display_colon_blink.setValue( spiffs_COLON_BLINK,40); 
+
+  custom_display_size.setValue(spiffs_DISPLAY_SIZE,40); 
 }  // END OF setup
 
 /********/
@@ -1563,21 +1773,77 @@ void loop() {
     
     setBrightness(map(analogVal,255,30,10,100));
     }
-    
+    if( ( spiffs_NTP_IP[0] == '0' ) && ( spiffs_NTP_IP[1] == 0 ))
+    {
+      ntpShouldUseIp = 0;
+      ntpServer = spiffs_NTP_URL;
+    }
+    else if( isIp ( String ( spiffs_NTP_IP ) ) )
+    {
+      ntpServerIp.fromString(spiffs_NTP_IP);
+      ntpShouldUseIp = 1;
+    }
     
     display.showNumberDecEx(analogVal,0,false,4,0);
     if(halfSec)
     {
+      memset(displayData, 0x00, 144 * 2);
       if(spiffs_COLON_BLINK[0] == '1')
       {
-        //display.showNumberDecEx(num,0b01000000,false,4,0);
+        if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+        {
+          writeChar7Seg((tm.Minute/10)+0x30, 0);
+          writeChar7Seg((tm.Minute%10)+0x30, 1);
+          writeChar7Seg((tm.Second/10)+0x30, 2);
+          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg(20+0x30, 4);
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+        {
+          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          drawPixel(31, 11, 1);
+          drawPixel(31, 10, 1);
+          drawPixel(32, 11, 1);
+          drawPixel(32, 10, 1);
+          drawPixel(31, 5, 1);
+          drawPixel(31, 4, 1);
+          drawPixel(32, 5, 1);
+          drawPixel(32, 4, 1);
+          WriteBigChar((tm.Second/10)+0x30,35,0,1);
+          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          sendDisplay16();
+        }
       }
       else
       {
-        //display.showNumberDecEx(num,0b01000000,false,4,0);
+        if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+        {
+          writeChar7Seg((tm.Minute/10)+0x30, 0);
+          writeChar7Seg((tm.Minute%10)+0x30, 1);
+          writeChar7Seg((tm.Second/10)+0x30, 2);
+          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg(20+0x30, 4);
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+        {
+          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          drawPixel(31, 11, 1);
+          drawPixel(31, 10, 1);
+          drawPixel(32, 11, 1);
+          drawPixel(32, 10, 1);
+          drawPixel(31, 5, 1);
+          drawPixel(31, 4, 1);
+          drawPixel(32, 5, 1);
+          drawPixel(32, 4, 1);
+          WriteBigChar((tm.Second/10)+0x30,35,0,1);
+          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          sendDisplay16();
+        }
       }
 
-      memset(displayData, 0x00, 144 * 2);
+      
 
       // WriteChar((tm.Hour/10)+0x30,0,0, 1);
       // WriteChar((tm.Hour%10)+0x30,7,0, 1);
@@ -1621,10 +1887,7 @@ void loop() {
       // WriteBiggerChar((tm.Second/10)+0x30,55,0,1);
       // WriteBiggerChar((tm.Second%10)+0x30,78,0,1);
         //3*3 display
-        writeChar7Seg((tm.Minute/10)+0x30, 0);
-        writeChar7Seg((tm.Minute%10)+0x30, 1);
-        writeChar7Seg((tm.Second/10)+0x30, 2);
-        writeChar7Seg((tm.Second%10)+0x30, 3);
+       
 
 
 
@@ -1654,11 +1917,6 @@ void loop() {
     else
     {
      //display.showNumberDecEx(num,0b01000000,false,4,0);
-      memset(displayData,0x00,144*2);
-
-    } else {
-      //display.showNumberDecEx(num,0b01000000,false,4,0);
-      memset(displayData, 0x00, 144 * 2);
 
       // WriteChar((tm.Hour/10)+0x30,0,0, 1);
       // WriteChar((tm.Hour%10)+0x30,7,0, 1);
@@ -1693,11 +1951,61 @@ void loop() {
       //3x3 display
 
 
-        writeChar7Seg((tm.Minute/10)+0x30, 0);
-        writeChar7Seg((tm.Minute%10)+0x30, 1);
-        writeChar7Seg((tm.Second/10)+0x30, 2);
-        writeChar7Seg((tm.Second%10)+0x30, 3);
-
+      memset(displayData, 0x00, 144 * 2);
+      if(spiffs_COLON_BLINK[0] == '1')
+      {
+        if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+        {
+          writeChar7Seg((tm.Minute/10)+0x30, 0);
+          writeChar7Seg((tm.Minute%10)+0x30, 1);
+          writeChar7Seg((tm.Second/10)+0x30, 2);
+          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg(17+0x30, 4);
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+        {
+          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          drawPixel(31, 11, 1);
+          drawPixel(31, 10, 1);
+          drawPixel(32, 11, 1);
+          drawPixel(32, 10, 1);
+          drawPixel(31, 5, 1);
+          drawPixel(31, 4, 1);
+          drawPixel(32, 5, 1);
+          drawPixel(32, 4, 1);
+          WriteBigChar((tm.Second/10)+0x30,35,0,1);
+          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          sendDisplay16();
+        }
+      }
+      else
+      {
+        if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+        {
+          writeChar7Seg((tm.Minute/10)+0x30, 0);
+          writeChar7Seg((tm.Minute%10)+0x30, 1);
+          writeChar7Seg((tm.Second/10)+0x30, 2);
+          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg(20+0x30, 4);
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+        {
+          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          drawPixel(31, 11, 0);
+          drawPixel(31, 10, 0);
+          drawPixel(32, 11, 0);
+          drawPixel(32, 10, 0);
+          drawPixel(31, 5, 0);
+          drawPixel(31, 4, 0);
+          drawPixel(32, 5, 0);
+          drawPixel(32, 4, 0);
+          WriteBigChar((tm.Second/10)+0x30,35,0,1);
+          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          sendDisplay16();
+        }
+      }
 
       // uint32_t temp = 0x24242424;
       // uint32_t temp2 = 0x24242424;
@@ -1718,21 +2026,11 @@ void loop() {
 
       // }
       //sendDisplay();
-      if(spiffs_COLON_BLINK[0] == '1')
-      {
-        //display.showNumberDecEx(num,0,false,4,0);
-      }
-      else
-      {
-        //display.showNumberDecEx(num,0b01000000,false,4,0);
-      }
       
     }
 
 
-#if DEBUG
     Serial.println(buff);
-#endif
 
     timeSynced = false;
   }
