@@ -1811,7 +1811,7 @@ if (spiffs_DHCP[0] == '1')
     {
       showStatus(STATUS_CONNERROR);
       wm.setConfigPortalBlocking(false);
-      wm.startConfigPortal("NARVAL_CLOCK");
+      wm.startConfigPortal(spiffs_AP_TIMEOUT);
       Serial.println("Connection error, Starting Config Portal");
       if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
       {
@@ -1876,7 +1876,7 @@ if (spiffs_DHCP[0] == '1')
     {
       showStatus(STATUS_CONNERROR);
       wm.setConfigPortalBlocking(false);
-      wm.startConfigPortal("NARVAL_CLOCK");
+      wm.startConfigPortal(spiffs_AP_TIMEOUT);
       Serial.println("Connection error, Starting Config Portal");
       
       if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
@@ -2016,7 +2016,7 @@ if (GPS.newNMEAreceived()) {
 
 
       wm.setConfigPortalBlocking(false);
-      wm.startConfigPortal("NARVAL_CLOCK");
+      wm.startConfigPortal(spiffs_AP_TIMEOUT);
     } else {
       Serial.println("Button Pressed, Starting Web Portal");
       wm.startWebPortal();
