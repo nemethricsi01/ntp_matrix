@@ -636,9 +636,10 @@ uint8_t font7seg[] = {
   0xf1,  //p 15
   0x87,  //o 16
   0x00,  //  17
-  0xff,   //  18 
-  0xf5,    // A 19
-  0x60    // kettospont 20
+  0xff,  //  18 
+  0xf5,  // A 19
+  0x60,  // kettospont 20
+  0xC3   //t 21
 };
 
 #define DEBUG true          // change to false to stop Serial output if you use a display such as LED or LCD
@@ -657,6 +658,10 @@ uint8_t font7seg[] = {
 #include <SPIFFS.h>
 #include <ArduinoJson.h>  // https://github.com/bblanchon/ArduinoJson
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_GPS.h>
+
+
+
 
 #define TRIGGER_PIN 0
 #define CLK 16
@@ -678,6 +683,12 @@ uint8_t font7seg[] = {
 #define UDP_LISTEN_PORT 8888
 #define VSPI FSPI
 
+
+#define GPSSerial Serial1
+
+// Connect to the GPS on the hardware port
+Adafruit_GPS GPS(&GPSSerial);
+
 #define BLOCKSX 4
 Adafruit_NeoPixel led(1, 48, NEO_GRB + NEO_KHZ800);
 uint8_t sevenSegBuff[5];
@@ -690,7 +701,7 @@ char spiffs_IP_ADDR[30] = "192.168.1.123";
 char spiffs_IP_GATE[30] = "192.168.1.1";
 char spiffs_IP_MASK[30] = "255.255.255.0";
 char spiffs_IP_ACCESS[30] = "192.168.4.10";
-char spiffs_AP_TIMEOUT[4] = "10";
+char spiffs_AP_TIMEOUT[40] = "NARVAL CLOCK 1";
 char spiffs_NTP_IP[30] = "192.168.1.100";
 char spiffs_NTP_URL[40] = "time.windows.com";
 char spiffs_NTP_DAYLIGHT[30] = "1";
@@ -719,8 +730,8 @@ WiFiManagerParameter custom_dhcp                          ("dhcp", "DHCP setting
 WiFiManagerParameter custom_ip_addr                       ("ip_addr", "Static ip address(only valid if dhcp = 0)", spiffs_IP_ADDR, 40);
 WiFiManagerParameter custom_ip_gate                       ("ip_gate", "Static gateway address(only valid if dhcp = 0)", spiffs_IP_GATE, 40);
 WiFiManagerParameter custom_ip_mask                       ("ip_mask", "Static subnet mask(only valid if dhcp = 0)", spiffs_IP_MASK, 40);
-WiFiManagerParameter custom_ip_access                     ("ip_access", "Access point ip address", spiffs_IP_ACCESS, 40);
-WiFiManagerParameter custom_ap_timeout                    ("ap_timeout", "Access point timeout x10sec (max 255)", spiffs_AP_TIMEOUT, 40);
+WiFiManagerParameter custom_ip_access                     ("ip_access", "Access point ip address(requires restart)", spiffs_IP_ACCESS, 40);
+WiFiManagerParameter custom_ap_timeout                    ("ap_timeout", "Clock ID(max 40 char)", spiffs_AP_TIMEOUT, 40);
 WiFiManagerParameter custom_ntpconfig_text                ("<b><center>NTP CONFIGURATION</center></b>");//////////////////////////////////////////
 WiFiManagerParameter custom_ntp_ip                        ("ntp_ip", "NTP ip server address", spiffs_NTP_IP, 40);
 WiFiManagerParameter custom_ntp_url                       ("ntp_url", "NTP url(only valid if ip is set to 0)", spiffs_NTP_URL, 40);
@@ -776,6 +787,7 @@ WiFiUDP ntpClient;
 IPAddress apip;
 
 boolean isIp(String str) {
+  if(str.length() == 0) return false;
   for (size_t i = 0; i < str.length(); i++) {
     int c = str.charAt(i);
     if (c != '.' && (c < '0' || c > '9')) {
@@ -829,6 +841,13 @@ void wifiSaveConfigCallback() {
     //end save
     shouldSaveWifiConfig = false;
   }
+  apip.fromString(spiffs_IP_ACCESS);
+  wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
+  if(WiFi.status() != WL_CONNECTED )
+  {
+    connected = 0;
+  }
+  
 }
 
 /* TIMEZONE */
@@ -1213,6 +1232,126 @@ void setBrightness(int percent)
 {
   ledcWrite(4, map(percent,100,0,0,255));
 }
+void printApIp2x2(void)
+{
+  memset(displayData, 0x00, 144 * 2);
+        WriteChar6x8('N', 0,0,1);//n
+        WriteChar6x8('O', 8,0,1);//n
+        WriteChar6x8(' ', 16,0,1);//n
+        WriteChar6x8('C', 24,0,1);//n
+        WriteChar6x8('O', 32,0,1);//n
+        WriteChar6x8('N', 40,0,1);//n
+        WriteChar6x8('N', 48,0,1);//n
+sendDisplay16();
+delay(2000);
+ memset(displayData, 0x00, 144 * 2);
+        WriteChar6x8('A', 0,8,1);//n
+        WriteChar6x8('P', 8,8,1);//n
+        WriteChar6x8(' ', 16,8,1);//n
+        WriteChar6x8('I', 24,8,1);//n
+        WriteChar6x8('P', 32,8,1);//n
+        WriteChar6x8(':', 40,8,1);//n
+        int num,hundred,ten;
+        num = apip[0];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 0,0,1);//n
+        WriteChar6x8(ten+0x30, 8,0,1);//n
+        WriteChar6x8(num+0x30, 16,0,1);//n
+        WriteChar6x8('.', 24,0,1);//n
+        num = apip[1];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 32,0,1);//n
+        WriteChar6x8(ten+0x30, 40,0,1);//n
+        WriteChar6x8(num+0x30, 48,0,1);//n
+        WriteChar6x8('.', 56,0,1);//n
+sendDisplay16();
+delay(2000);
+memset(displayData, 0x00, 144 * 2);
+        num = apip[2];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 0,0,1);//n
+        WriteChar6x8(ten+0x30, 8,0,1);//n
+        WriteChar6x8(num+0x30, 16,0,1);//n
+        WriteChar6x8('.', 24,0,1);//n
+        num = apip[3];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 32,0,1);//n
+        WriteChar6x8(ten+0x30, 40,0,1);//n
+        WriteChar6x8(num+0x30, 48,0,1);//n
+        WriteChar6x8('.', 56,0,1);//n
+sendDisplay16();
+delay(2000);
+        
+}
+void printStaIp2x2(void)
+{
+        IPAddress ip = WiFi.localIP();
+        memset(displayData, 0x00, 144 * 2);
+        WriteChar6x8('S', 0,0,1);//n
+        WriteChar6x8('T', 8,0,1);//n
+        WriteChar6x8('A', 16,0,1);//n
+        WriteChar6x8(' ', 24,0,1);//n
+        WriteChar6x8('I', 32,0,1);//n
+        WriteChar6x8('P', 40,0,1);//n
+        WriteChar6x8(':', 48,0,1);//n
+sendDisplay16();
+delay(2000);
+ memset(displayData, 0x00, 144 * 2);
+        int num,hundred,ten;
+        num = ip[0];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 0,0,1);//n
+        WriteChar6x8(ten+0x30, 8,0,1);//n
+        WriteChar6x8(num+0x30, 16,0,1);//n
+        WriteChar6x8('.', 24,0,1);//n
+        num = ip[1];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 32,0,1);//n
+        WriteChar6x8(ten+0x30, 40,0,1);//n
+        WriteChar6x8(num+0x30, 48,0,1);//n
+        WriteChar6x8('.', 56,0,1);//n
+sendDisplay16();
+delay(2000);
+memset(displayData, 0x00, 144 * 2);
+        num = ip[2];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 0,0,1);//n
+        WriteChar6x8(ten+0x30, 8,0,1);//n
+        WriteChar6x8(num+0x30, 16,0,1);//n
+        WriteChar6x8('.', 24,0,1);//n
+        num = ip[3];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 32,0,1);//n
+        WriteChar6x8(ten+0x30, 40,0,1);//n
+        WriteChar6x8(num+0x30, 48,0,1);//n
+        WriteChar6x8('.', 56,0,1);//n
+sendDisplay16();
+delay(2000);
+}
 void printApIp7Seg(void)
 {
         writeChar7Seg(14+0x30, 0);//n
@@ -1276,10 +1415,20 @@ void printApIp7Seg(void)
 void printStaIp7Seg(void)
 {
 IPAddress ip = WiFi.localIP();
-        writeChar7Seg(11+0x30, 0);//d
-        writeChar7Seg(12+0x30, 1);//h
-        writeChar7Seg(10+0x30, 2);//c
-        writeChar7Seg(15+0x30, 3);//p
+        writeChar7Seg(5+0x30, 0);//s
+        writeChar7Seg(21+0x30, 1);//t
+        writeChar7Seg(19+0x30, 2);//a
+        writeChar7Seg(21+0x30, 3);//t
+        delay(1000);
+        writeChar7Seg(13+0x30, 0);//i
+        writeChar7Seg(16+0x30, 1);//o
+        writeChar7Seg(14+0x30, 2);//n
+        writeChar7Seg(17+0x30, 3);//null
+        delay(1000);
+        writeChar7Seg(13+0x30, 0);//i
+        writeChar7Seg(15+0x30, 1);//P
+        writeChar7Seg(17+0x30, 2);//null
+        writeChar7Seg(17+0x30, 3);//null
         delay(2000);
         int num,hundred,ten;
         num = ip[0];
@@ -1327,9 +1476,14 @@ IPAddress ip = WiFi.localIP();
 
 void saveConfig(void) {
 
-  Serial.print("ip add is ip?");
-  Serial.println(isIp((String)spiffs_IP_ADDR));
+ 
   DynamicJsonDocument json(1024);
+  char testbuff[50];
+  strcpy(testbuff, custom_ip_access.getValue());
+   Serial.print("ip add is ip?");
+  Serial.println(isIp((String)testbuff));
+  if(isIp((String)testbuff))
+  {
   strcpy(spiffs_DISPLAY_SIZE, custom_display_size.getValue());
   strcpy(spiffs_BRIGHTNESS_VAL, custom_display_brightness_val.getValue());
   strcpy(spiffs_COLON_BLINK, custom_display_colon_blink.getValue());
@@ -1372,26 +1526,26 @@ void saveConfig(void) {
   serializeJson(json, Serial);
   serializeJson(json, configFile);
   configFile.close();
-
+  }
 
   if( ( spiffs_NTP_IP[0] == '0' ) && ( spiffs_NTP_IP[1] == 0 ))
-{
-  ntpShouldUseIp = 0;
-  ntpServer = spiffs_NTP_URL;
-}
-else if( isIp ( String ( spiffs_NTP_IP ) ) )
-{
-  ntpServerIp.fromString(spiffs_NTP_IP);
-  ntpShouldUseIp = 1;
-}
+  {
+    ntpShouldUseIp = 0;
+    ntpServer = spiffs_NTP_URL;
+  }
+  else if( isIp ( String ( spiffs_NTP_IP ) ) )
+  {
+    ntpServerIp.fromString(spiffs_NTP_IP);
+    ntpShouldUseIp = 1;
+  }
+  apip.fromString(spiffs_IP_ACCESS);
+  wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
 }
 /**********************************************************************************************************************************************************/
 /* SETUP */
 /*********/
 void setup() {
   showStatus(STATUS_CONN_START);
-  pinMode(17, INPUT);//temporary for gps module
-  pinMode(18, INPUT);//temporary for gps module
   display.setBrightness(7, true);
   WiFi.disconnect();
   vspi = new SPIClass(VSPI);
@@ -1408,6 +1562,8 @@ void setup() {
   ledcWrite(4, 250);
 
   Serial.begin(57600);
+  GPSSerial.begin(9600,SERIAL_8N1,18,17);
+
   Serial << F("A.N.T. Accurate Ntp Time (C) Phil Morris 2018 <www.lydiard.plus.com>") << endl;
 
   if (SPIFFS.begin()) 
@@ -1501,24 +1657,19 @@ else if( isIp ( String ( spiffs_NTP_IP ) ) )
   ntpServerIp.fromString(spiffs_NTP_IP);
   ntpShouldUseIp = 1;
 }
-int analogVal = map(analogRead(8),0,4096,0,255);
- if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '1')
-    {
-      String brightnessval = String(spiffs_BRIGHTNESS_VAL);
-      setBrightness(brightnessval.toInt());
-    }
-    if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '0')
-    {
-    
+int analogVal = map(analogRead(8),0,4096,30,255);
+if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '1')
+  {
+    String brightnessval = String(spiffs_BRIGHTNESS_VAL);
+    setBrightness(brightnessval.toInt());
+  }
+  if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '0')
+  {
     setBrightness(map(analogVal,255,30,10,100));
-    }
-
+  }
 apip.fromString(spiffs_IP_ACCESS);
 wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
-
-
-  wm.setHostname("NARVAL_CLOCK1");
-  if (spiffs_DHCP[0] == '1') 
+if (spiffs_DHCP[0] == '1') 
   {
     WiFi.mode(WIFI_STA);
     WiFi.begin(spiffs_SSID, spiffs_PASSWORD);
@@ -1527,7 +1678,7 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
       delay(2000);
       retryCounter++;
     }
-    if(retryCounter == 5)
+    if(retryCounter >= 5)
     {
       showStatus(STATUS_CONNERROR);
       wm.setConfigPortalBlocking(false);
@@ -1537,11 +1688,26 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
       {
       printApIp7Seg();
       }
+      if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+      {
+      printApIp2x2();
+      
+      }
       delay(2000);
     }//retrycounter == 5 end
     else if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
       {
         printStaIp7Seg();
+        ntpAlarmCounter = 0;//???????
+        ntpFetchFlag = true;
+        connected = 1;
+      }
+    else if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+      {
+        printStaIp2x2();
+        ntpAlarmCounter = 0;//???????
+        ntpFetchFlag = true;
+        connected = 1;
       }
   }//dhcp ip end 
   else if (spiffs_DHCP[0] == '0') 
@@ -1575,12 +1741,28 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
       if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
       {
         printApIp7Seg();
+
+      }
+      if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+      {
+        printApIp2x2();
+        
       }
       delay(2000);
     }
     else if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
       {
         printStaIp7Seg();
+        ntpAlarmCounter = 0;//???????
+        ntpFetchFlag = true;
+        connected = 1;
+      }
+      else if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+      {
+        printStaIp2x2();
+        ntpAlarmCounter = 0;//???????
+        ntpFetchFlag = true;
+        connected = 1;
       }
     
     Serial << (F("IP address is ")) << WiFi.localIP() << endl;
@@ -1622,6 +1804,11 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
   custom_display_colon_blink.setValue( spiffs_COLON_BLINK,40); 
 
   custom_display_size.setValue(spiffs_DISPLAY_SIZE,40); 
+
+
+
+  wm.setConfigPortalBlocking(false);
+  wm.startWebPortal();
 }  // END OF setup
 
 /********/
@@ -1630,6 +1817,48 @@ wm.setAPStaticIPConfig(apip,apip, IPAddress(255,255,255,0));
 
 void loop() {
 
+char c = GPS.read();
+if (c)
+      Serial.print(c);
+if (GPS.newNMEAreceived()) {
+    // a tricky thing here is if we print the NMEA sentence, or data
+    // we end up not listening and catching other sentences!
+    // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
+    // Serial.println(GPS.lastNMEA()); // this also sets the newNMEAreceived()
+    // flag to false
+    if (!GPS.parse(GPS.lastNMEA())) // this also sets the newNMEAreceived() flag
+                                    // to false
+      return; // we can fail to parse a sentence in which case we should just
+              // wait for another
+  }
+      float s = GPS.seconds + GPS.milliseconds / 1000. + GPS.secondsSinceTime();
+    int m = GPS.minute;
+    int h = GPS.hour;
+    int d = GPS.day;
+    Serial.print("\nDate: ");
+    Serial.print(GPS.year + 2000, DEC);
+    Serial.print("-");
+    if (GPS.month < 10)
+      Serial.print("0");
+    Serial.print(GPS.month, DEC);
+    Serial.print("-");
+    if (d < 10)
+      Serial.print("0");
+    Serial.print(d, DEC);
+    Serial.print("   Time: ");
+    if (h < 10)
+      Serial.print("0");
+    Serial.print(h, DEC);
+    Serial.print(':');
+    if (m < 10)
+      Serial.print("0");
+    Serial.print(m, DEC);
+    Serial.print(':');
+    if (s < 10)
+      Serial.print("0");
+    Serial.println(s, 3);
+
+
   if (shouldSaveConfig) 
   {
     saveConfig();
@@ -1637,23 +1866,14 @@ void loop() {
   }
   if (WiFi.status() == WL_CONNECTED && !connected) 
   {
-
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    memset(displayData, 0x00, 144 * 2);
-    sprintf(dispbuff, "%s", WiFi.localIP().toString());
-    int x = 0;
-    for (int i = 0; i < strlen(dispbuff); i++) {
-      WriteChar6x8(dispbuff[i], x, 2, 1);
-      Serial.println(dispbuff[i]);
-      x = x + 6;
-    }
-
-    sendDisplay();
-    delay(5000);
-    Serial.println(WiFi.localIP());
-    wm.setConfigPortalBlocking(false);
-    wm.startWebPortal();
+    if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+      {
+        printStaIp7Seg();
+      }
+      else if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+      {
+        printStaIp2x2();
+      }
     ntpAlarmCounter = 0;//???????
     ntpFetchFlag = true;
     connected = true;
@@ -1762,7 +1982,7 @@ void loop() {
     int num;
     num = tm.Minute*100;
     num+= tm.Second;
-    int analogVal = map(analogRead(8),0,4096,0,255);
+    int analogVal = map(analogRead(8),0,4096,30,255);
     if(spiffs_BRIGHTNESS_AUTOMANUAL[0] == '1')
     {
       String brightnessval = String(spiffs_BRIGHTNESS_VAL);
@@ -2033,35 +2253,5 @@ void loop() {
     Serial.println(buff);
 
     timeSynced = false;
-  }
-  if (timerFlag) {
-    if (toggle) {
-      //memset(displayData,0x00,128);
-      // x++;
-      // if(x >63)
-      // {
-      //   x = 0;
-      //   y++;
-      //   if(y >15)
-      //   {
-      //     y = 0;
-      //   }
-      // }
-      // drawPixel(x, y, 1);
-      // WriteChar(x,10,0, 1);
-      // x++;
-      // if(x >91)
-      // {
-      //   x = 48;
-      // }
-
-      // sendDisplay();
-      toggle = 0;
-    } else {
-      //   memset(displayData,0x00,128);
-      // sendDisplay();
-      toggle = 1;
-    }
-    timerFlag = 0;
   }
 }  // END OF loop
