@@ -724,6 +724,10 @@ uint32_t rtcSetDelay = 0;
 uint8_t ntpFailCounter = 0;
 bool connected = false;
 
+bool gpsFetchFlag;
+
+uint32_t gpsFetchTimer;
+
 
 WiFiManagerParameter custom_ipconfig_text                 ("<b><center>IP CONFIGURATION</center></b>");//////////////////////////////////////////
 WiFiManagerParameter custom_dhcp                          ("dhcp", "DHCP settings:(1:on,0:off)", spiffs_DHCP, 40);
@@ -743,7 +747,7 @@ WiFiManagerParameter custom_display_config_text           ("<b><center>DISPLAY C
 WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto: 0/manual: 1)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
 WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-100%)", spiffs_BRIGHTNESS_VAL, 40);
 WiFiManagerParameter custom_display_colon_blink           ("display_colon_blink", "Display colon(double dot) blink:(1:on,0:off)", spiffs_COLON_BLINK, 40);
-WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,32,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
+WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
 
 bool shouldSaveConfig = false;
 bool shouldSaveWifiConfig = false;
@@ -903,7 +907,12 @@ TimeChangeRule* tcr;  //pointer to the time change rule, use to get the TZ abbre
 //volatile uint32_t sysFraction;  // for future development
 hw_timer_t* My_timer = NULL;
 void IRAM_ATTR onTimer() {
-  timerFlag = 1;
+  gpsFetchTimer++;
+  if(gpsFetchTimer >= 5)
+  {
+    gpsFetchTimer = 0;
+    gpsFetchFlag = 1;
+  }
 }
 void ICACHE_RAM_ATTR rtcIntISR(void);
 // the RTC 1PPS signal calls this ISR
@@ -1019,7 +1028,7 @@ void drawPixel(uint8_t x, uint8_t y, uint8_t color)
   if (y > 7) {
     if (y < 16) {
       y = y - 4;
-      if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == '8' ) )
+      if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
         {
          xBlock += 40;  //here this needs to be changed back to 24 if i want to use the 2x2 grid display(idk yet why 24)
         }
@@ -1232,6 +1241,123 @@ void setBrightness(int percent)
 {
   ledcWrite(4, map(percent,100,0,0,255));
 }
+void printApIp3x3(void)
+{
+  memset(displayData, 0x00, 144 * 2);
+        WriteChar6x8('N', 0,0,1);//n
+        WriteChar6x8('O', 8,0,1);//n
+        WriteChar6x8(' ', 16,0,1);//n
+        WriteChar6x8('C', 24,0,1);//n
+        WriteChar6x8('O', 32,0,1);//n
+        WriteChar6x8('N', 40,0,1);//n
+        WriteChar6x8('N', 48,0,1);//n
+
+        WriteChar6x8('A', 0,8,1);//n
+        WriteChar6x8('P', 8,8,1);//n
+        WriteChar6x8(' ', 16,8,1);//n
+        WriteChar6x8('I', 24,8,1);//n
+        WriteChar6x8('P', 32,8,1);//n
+        WriteChar6x8(':', 40,8,1);//n
+        int num,hundred,ten;
+        num = apip[0];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 0,0,1);//n
+        WriteChar6x8(ten+0x30, 6,0,1);//n
+        WriteChar6x8(num+0x30, 12,0,1);//n
+        WriteChar6x8('.', 18,0,1);//n
+        num = apip[1];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 24,0,1);//n
+        WriteChar6x8(ten+0x30, 30,0,1);//n
+        WriteChar6x8(num+0x30, 36,0,1);//n
+        WriteChar6x8('.', 42,0,1);//n
+        num = apip[2];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 48,0,1);//n
+        WriteChar6x8(ten+0x30, 54,0,1);//n
+        WriteChar6x8(num+0x30, 60,0,1);//n
+        WriteChar6x8('.', 66,0,1);//n
+        num = apip[3];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 72,0,1);//n
+        WriteChar6x8(ten+0x30, 78,0,1);//n
+        WriteChar6x8(num+0x30, 84,0,1);//n
+        WriteChar6x8('.', 90,0,1);//n
+sendDisplay();
+delay(2000);
+        
+}
+void printStaIp3x3(void)
+{
+        IPAddress ip = WiFi.localIP();
+        memset(displayData, 0x00, 144 * 2);
+        WriteChar6x8('S', 0,8,1);//n
+        WriteChar6x8('T', 6,8,1);//n
+        WriteChar6x8('A', 12,8,1);//n
+        WriteChar6x8('T', 18,8,1);//n
+        WriteChar6x8('I', 24,8,1);//n
+        WriteChar6x8('O', 30,8,1);//n
+        WriteChar6x8('N', 36,8,1);//n
+        WriteChar6x8(' ', 42,8,1);//n
+        WriteChar6x8('I', 48,8,1);//n
+        WriteChar6x8('P', 54,8,1);//n
+        WriteChar6x8(':', 60,8,1);//n
+
+                int num,hundred,ten;
+        num = ip[0];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 0,0,1);//n
+        WriteChar6x8(ten+0x30, 6,0,1);//n
+        WriteChar6x8(num+0x30, 12,0,1);//n
+        WriteChar6x8('.', 18,0,1);//n
+        num = ip[1];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 24,0,1);//n
+        WriteChar6x8(ten+0x30, 30,0,1);//n
+        WriteChar6x8(num+0x30, 36,0,1);//n
+        WriteChar6x8('.', 42,0,1);//n
+        num = ip[2];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 48,0,1);//n
+        WriteChar6x8(ten+0x30, 54,0,1);//n
+        WriteChar6x8(num+0x30, 60,0,1);//n
+        WriteChar6x8('.', 66,0,1);//n
+        num = ip[3];
+        hundred = num/100;
+        num = num%100;
+        ten = num/10;
+        num = num%10;
+        WriteChar6x8(hundred+0x30, 72,0,1);//n
+        WriteChar6x8(ten+0x30, 78,0,1);//n
+        WriteChar6x8(num+0x30, 84,0,1);//n
+        WriteChar6x8('.', 90,0,1);//n
+sendDisplay();
+delay(2000);
+}
+
+
+
 void printApIp2x2(void)
 {
   memset(displayData, 0x00, 144 * 2);
@@ -1308,7 +1434,7 @@ void printStaIp2x2(void)
         WriteChar6x8(':', 48,0,1);//n
 sendDisplay16();
 delay(2000);
- memset(displayData, 0x00, 144 * 2);
+memset(displayData, 0x00, 144 * 2);
         int num,hundred,ten;
         num = ip[0];
         hundred = num/100;
@@ -1562,8 +1688,8 @@ void setup() {
   ledcWrite(4, 250);
 
   Serial.begin(57600);
-  GPSSerial.begin(9600,SERIAL_8N1,18,17);
-
+  GPSSerial.begin(9600,SERIAL_8N1,17,18);
+  
   Serial << F("A.N.T. Accurate Ntp Time (C) Phil Morris 2018 <www.lydiard.plus.com>") << endl;
 
   if (SPIFFS.begin()) 
@@ -1644,7 +1770,10 @@ void setup() {
   wm.setBreakAfterConfig(true);
   wm.setSaveConfigCallback(wifiSaveConfigCallback);
   wm.setSaveParamsCallback(saveConfigCallback);
-  
+  if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+      {
+      dispTest();
+      }
 
 //ntp server config
 if( ( spiffs_NTP_IP[0] == '0' ) && ( spiffs_NTP_IP[1] == 0 ))
@@ -1693,6 +1822,11 @@ if (spiffs_DHCP[0] == '1')
       printApIp2x2();
       
       }
+      if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+      {
+      printApIp3x3();
+      
+      }
       delay(2000);
     }//retrycounter == 5 end
     else if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
@@ -1705,6 +1839,13 @@ if (spiffs_DHCP[0] == '1')
     else if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
       {
         printStaIp2x2();
+        ntpAlarmCounter = 0;//???????
+        ntpFetchFlag = true;
+        connected = 1;
+      }
+      else if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+      {
+        printStaIp3x3();
         ntpAlarmCounter = 0;//???????
         ntpFetchFlag = true;
         connected = 1;
@@ -1748,6 +1889,11 @@ if (spiffs_DHCP[0] == '1')
         printApIp2x2();
         
       }
+      if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+      {
+        printApIp3x3();
+        
+      }
       delay(2000);
     }
     else if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
@@ -1760,6 +1906,13 @@ if (spiffs_DHCP[0] == '1')
       else if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
       {
         printStaIp2x2();
+        ntpAlarmCounter = 0;//???????
+        ntpFetchFlag = true;
+        connected = 1;
+      }
+      else if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+      {
+        printStaIp3x3();
         ntpAlarmCounter = 0;//???????
         ntpFetchFlag = true;
         connected = 1;
@@ -1818,8 +1971,6 @@ if (spiffs_DHCP[0] == '1')
 void loop() {
 
 char c = GPS.read();
-if (c)
-      Serial.print(c);
 if (GPS.newNMEAreceived()) {
     // a tricky thing here is if we print the NMEA sentence, or data
     // we end up not listening and catching other sentences!
@@ -1831,32 +1982,6 @@ if (GPS.newNMEAreceived()) {
       return; // we can fail to parse a sentence in which case we should just
               // wait for another
   }
-      float s = GPS.seconds + GPS.milliseconds / 1000. + GPS.secondsSinceTime();
-    int m = GPS.minute;
-    int h = GPS.hour;
-    int d = GPS.day;
-    Serial.print("\nDate: ");
-    Serial.print(GPS.year + 2000, DEC);
-    Serial.print("-");
-    if (GPS.month < 10)
-      Serial.print("0");
-    Serial.print(GPS.month, DEC);
-    Serial.print("-");
-    if (d < 10)
-      Serial.print("0");
-    Serial.print(d, DEC);
-    Serial.print("   Time: ");
-    if (h < 10)
-      Serial.print("0");
-    Serial.print(h, DEC);
-    Serial.print(':');
-    if (m < 10)
-      Serial.print("0");
-    Serial.print(m, DEC);
-    Serial.print(':');
-    if (s < 10)
-      Serial.print("0");
-    Serial.println(s, 3);
 
 
   if (shouldSaveConfig) 
@@ -1873,6 +1998,10 @@ if (GPS.newNMEAreceived()) {
       else if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
       {
         printStaIp2x2();
+      }
+      else if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+      {
+        printStaIp3x3();
       }
     ntpAlarmCounter = 0;//???????
     ntpFetchFlag = true;
@@ -1894,7 +2023,8 @@ if (GPS.newNMEAreceived()) {
     }
     startTime = millis();
   }
-
+  if(spiffs_NTP_GPSENABLE[0] == '0')
+  {
   // ntpAlarmCounter increments each second and sets the ntpFetchFlag
   // when the required time period has elapsed.
   if (!ntpFetchFlag && ntpAlarmCounter == NTP_FETCH_PERIOD)
@@ -1950,7 +2080,6 @@ if (GPS.newNMEAreceived()) {
     }
     ntpFetchFlag = false;  // clear the fetch Alarm flag
   }
-
   // sync everything when rtcSetDelay has expired
   if (ntpSetFlag && millis() >= rtcSetDelay) 
   {
@@ -1960,6 +2089,59 @@ if (GPS.newNMEAreceived()) {
     timeSynced = true;   // time DEBUG printout includes NTP timing details
     rtcSetDelay = 0;
   }
+  }
+if(spiffs_NTP_GPSENABLE[0] == '1')
+  {
+
+    
+    if (gpsFetchFlag) 
+    {
+    time_t gpsTimet;
+    tmElements_t gps_time;
+    
+    gps_time.Year = GPS.year;
+    gps_time.Month = GPS.month;
+    gps_time.Day = GPS.day;
+    gps_time.Hour = GPS.hour;
+    gps_time.Minute = GPS.minute;
+    gps_time.Second = GPS.seconds;
+    gpsTimet = makeTime(gps_time);
+
+    if((int)GPS.fix)
+    {
+      RTC.set(gpsTimet);    // set the RTC
+    sysClock = gpsTimet;  // set sysClock
+    }
+    
+    Serial.print("\nDate: ");
+    Serial.print(gps_time.Year, DEC);
+    Serial.print("-");
+    Serial.print(gps_time.Month, DEC);
+    Serial.print("-");
+    Serial.print(gps_time.Day, DEC);
+    Serial.print("   Time: ");
+    Serial.print(gps_time.Hour, DEC);
+    Serial.print(':');
+    Serial.print(gps_time.Minute, DEC);
+    Serial.print(':');
+    Serial.println(gps_time.Second, DEC);
+    Serial.print("Fix: ");
+    Serial.print((int)GPS.fix);
+    Serial.print(" quality: ");
+    Serial.println((int)GPS.fixquality);
+    Serial.print("Time [s] since last fix: ");
+    Serial.println(GPS.secondsSinceFix(), 3);
+    Serial.print("    since last GPS time: ");
+    Serial.println(GPS.secondsSinceTime(), 3);
+    Serial.print("    since last GPS date: ");
+    Serial.println(GPS.secondsSinceDate(), 3);
+    Serial.print("Satellites: ");
+    Serial.println((int)GPS.satellites);
+    gpsFetchFlag = false;
+    }
+
+  }
+  
 
   // print out the sysClock timestamp
   if (outputTimestampEnable) 
@@ -2012,16 +2194,16 @@ if (GPS.newNMEAreceived()) {
       {
         if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
         {
-          writeChar7Seg((tm.Minute/10)+0x30, 0);
-          writeChar7Seg((tm.Minute%10)+0x30, 1);
-          writeChar7Seg((tm.Second/10)+0x30, 2);
-          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg((tm.Hour/10)+0x30, 0);
+          writeChar7Seg((tm.Hour%10)+0x30, 1);
+          writeChar7Seg((tm.Minute/10)+0x30, 2);
+          writeChar7Seg((tm.Minute%10)+0x30, 3);
           writeChar7Seg(20+0x30, 4);
         }
         if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
         {
-          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
-          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          WriteBigChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBigChar((tm.Hour%10)+0x30,16,0,1);
           drawPixel(31, 11, 1);
           drawPixel(31, 10, 1);
           drawPixel(32, 11, 1);
@@ -2030,25 +2212,47 @@ if (GPS.newNMEAreceived()) {
           drawPixel(31, 4, 1);
           drawPixel(32, 5, 1);
           drawPixel(32, 4, 1);
-          WriteBigChar((tm.Second/10)+0x30,35,0,1);
-          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          WriteBigChar((tm.Minute/10)+0x30,35,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,51,0,1);
           sendDisplay16();
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+        {
+          WriteBiggerChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBiggerChar((tm.Hour%10)+0x30,23,0,1);
+          for(int y = 15; y <18;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 1);
+            }
+          }
+          for(int y = 6; y <9;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 1);
+            }
+          }
+          WriteBiggerChar((tm.Minute/10)+0x30,55,0,1);
+          WriteBiggerChar((tm.Minute%10)+0x30,78,0,1);
+          sendDisplay();
         }
       }
       else
       {
         if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
         {
-          writeChar7Seg((tm.Minute/10)+0x30, 0);
-          writeChar7Seg((tm.Minute%10)+0x30, 1);
-          writeChar7Seg((tm.Second/10)+0x30, 2);
-          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg((tm.Hour/10)+0x30, 0);
+          writeChar7Seg((tm.Hour%10)+0x30, 1);
+          writeChar7Seg((tm.Minute/10)+0x30, 2);
+          writeChar7Seg((tm.Minute%10)+0x30, 3);
           writeChar7Seg(20+0x30, 4);
         }
         if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
         {
-          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
-          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          WriteBigChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBigChar((tm.Hour%10)+0x30,16,0,1);
           drawPixel(31, 11, 1);
           drawPixel(31, 10, 1);
           drawPixel(32, 11, 1);
@@ -2057,9 +2261,31 @@ if (GPS.newNMEAreceived()) {
           drawPixel(31, 4, 1);
           drawPixel(32, 5, 1);
           drawPixel(32, 4, 1);
-          WriteBigChar((tm.Second/10)+0x30,35,0,1);
-          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          WriteBigChar((tm.Minute/10)+0x30,35,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,51,0,1);
           sendDisplay16();
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+        {
+          WriteBiggerChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBiggerChar((tm.Hour%10)+0x30,23,0,1);
+          for(int y = 15; y <18;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 1);
+            }
+          }
+          for(int y = 6; y <9;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 1);
+            }
+          }
+          WriteBiggerChar((tm.Minute/10)+0x30,55,0,1);
+          WriteBiggerChar((tm.Minute%10)+0x30,78,0,1);
+          sendDisplay();
         }
       }
 
@@ -2176,43 +2402,16 @@ if (GPS.newNMEAreceived()) {
       {
         if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
         {
-          writeChar7Seg((tm.Minute/10)+0x30, 0);
-          writeChar7Seg((tm.Minute%10)+0x30, 1);
-          writeChar7Seg((tm.Second/10)+0x30, 2);
-          writeChar7Seg((tm.Second%10)+0x30, 3);
+          writeChar7Seg((tm.Hour/10)+0x30, 0);
+          writeChar7Seg((tm.Hour%10)+0x30, 1);
+          writeChar7Seg((tm.Minute/10)+0x30, 2);
+          writeChar7Seg((tm.Minute%10)+0x30, 3);
           writeChar7Seg(17+0x30, 4);
         }
         if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
         {
-          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
-          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
-          drawPixel(31, 11, 1);
-          drawPixel(31, 10, 1);
-          drawPixel(32, 11, 1);
-          drawPixel(32, 10, 1);
-          drawPixel(31, 5, 1);
-          drawPixel(31, 4, 1);
-          drawPixel(32, 5, 1);
-          drawPixel(32, 4, 1);
-          WriteBigChar((tm.Second/10)+0x30,35,0,1);
-          WriteBigChar((tm.Second%10)+0x30,51,0,1);
-          sendDisplay16();
-        }
-      }
-      else
-      {
-        if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
-        {
-          writeChar7Seg((tm.Minute/10)+0x30, 0);
-          writeChar7Seg((tm.Minute%10)+0x30, 1);
-          writeChar7Seg((tm.Second/10)+0x30, 2);
-          writeChar7Seg((tm.Second%10)+0x30, 3);
-          writeChar7Seg(20+0x30, 4);
-        }
-        if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
-        {
-          WriteBigChar((tm.Minute/10)+0x30,0,0,1);
-          WriteBigChar((tm.Minute%10)+0x30,16,0,1);
+          WriteBigChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBigChar((tm.Hour%10)+0x30,16,0,1);
           drawPixel(31, 11, 0);
           drawPixel(31, 10, 0);
           drawPixel(32, 11, 0);
@@ -2221,9 +2420,80 @@ if (GPS.newNMEAreceived()) {
           drawPixel(31, 4, 0);
           drawPixel(32, 5, 0);
           drawPixel(32, 4, 0);
-          WriteBigChar((tm.Second/10)+0x30,35,0,1);
-          WriteBigChar((tm.Second%10)+0x30,51,0,1);
+          WriteBigChar((tm.Minute/10)+0x30,35,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,51,0,1);
           sendDisplay16();
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+        {
+          WriteBiggerChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBiggerChar((tm.Hour%10)+0x30,23,0,1);
+          for(int y = 15; y <18;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 0);
+            }
+          }
+          for(int y = 6; y <9;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 0);
+            }
+          }
+          WriteBiggerChar((tm.Minute/10)+0x30,55,0,1);
+          WriteBiggerChar((tm.Minute%10)+0x30,78,0,1);
+          sendDisplay();
+        }
+      }
+      else
+      {
+        if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
+        {
+          writeChar7Seg((tm.Hour/10)+0x30, 0);
+          writeChar7Seg((tm.Hour%10)+0x30, 1);
+          writeChar7Seg((tm.Minute/10)+0x30, 2);
+          writeChar7Seg((tm.Minute%10)+0x30, 3);
+          writeChar7Seg(20+0x30, 4);
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '1' ) && ( spiffs_DISPLAY_SIZE[1] == '6' ) )
+        {
+          WriteBigChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBigChar((tm.Hour%10)+0x30,16,0,1);
+          drawPixel(31, 11, 1);
+          drawPixel(31, 10, 1);
+          drawPixel(32, 11, 1);
+          drawPixel(32, 10, 1);
+          drawPixel(31, 5, 1);
+          drawPixel(31, 4, 1);
+          drawPixel(32, 5, 1);
+          drawPixel(32, 4, 1);
+          WriteBigChar((tm.Minute/10)+0x30,35,0,1);
+          WriteBigChar((tm.Minute%10)+0x30,51,0,1);
+          sendDisplay16();
+        }
+        if( ( spiffs_DISPLAY_SIZE[0] == '3' ) && ( spiffs_DISPLAY_SIZE[1] == '2' ) )
+        {
+          WriteBiggerChar((tm.Hour/10)+0x30,0,0,1);
+          WriteBiggerChar((tm.Hour%10)+0x30,23,0,1);
+          for(int y = 15; y <18;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 1);
+            }
+          }
+          for(int y = 6; y <9;y++)
+          {
+            for(int x = 45; x<51;x++)
+            {
+              drawPixel(x, y, 1);
+            }
+          }
+          WriteBiggerChar((tm.Minute/10)+0x30,55,0,1);
+          WriteBiggerChar((tm.Minute%10)+0x30,78,0,1);
+          sendDisplay();
         }
       }
 
