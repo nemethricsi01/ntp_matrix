@@ -747,7 +747,7 @@ WiFiManagerParameter custom_display_config_text           ("<b><center>DISPLAY C
 WiFiManagerParameter custom_display_brightness_automanual ("display_brightness_automanual", "Display brightness setup(auto: 0/manual: 1)", spiffs_BRIGHTNESS_AUTOMANUAL, 40);
 WiFiManagerParameter custom_display_brightness_val        ("display_brightness_val", "Display brightness set(1-100%)", spiffs_BRIGHTNESS_VAL, 40);
 WiFiManagerParameter custom_display_colon_blink           ("display_colon_blink", "Display colon(double dot) blink:(1:on,0:off)", spiffs_COLON_BLINK, 40);
-WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,48,4d7s)", spiffs_DISPLAY_SIZE, 40);
+WiFiManagerParameter custom_display_size                  ("display_size", "Display size (16,32,4d7s)", spiffs_DISPLAY_SIZE, 40);
 
 bool shouldSaveConfig = false;
 bool shouldSaveWifiConfig = false;
@@ -851,6 +851,9 @@ void wifiSaveConfigCallback() {
   {
     connected = 0;
   }
+  wm.setConfigPortalTimeout(120);
+  wm.setConfigPortalBlocking(false);
+  wm.startConfigPortal(spiffs_AP_TIMEOUT);
   
 }
 
@@ -1772,6 +1775,7 @@ void setup() {
   wm.setSaveParamsCallback(saveConfigCallback);
   if( ( spiffs_DISPLAY_SIZE[0] == '4' ) && ( spiffs_DISPLAY_SIZE[1] == 'd' ) && ( spiffs_DISPLAY_SIZE[2] == '7' ) && ( spiffs_DISPLAY_SIZE[3] == 's' ) )
       {
+      setBrightness(100);
       dispTest();
       }
 
@@ -1850,6 +1854,7 @@ if (spiffs_DHCP[0] == '1')
         ntpFetchFlag = true;
         connected = 1;
       }
+      Serial << (F("IP address is ")) << WiFi.localIP() << endl;
   }//dhcp ip end 
   else if (spiffs_DHCP[0] == '0') 
   {
@@ -1958,7 +1963,12 @@ if (spiffs_DHCP[0] == '1')
 
   custom_display_size.setValue(spiffs_DISPLAY_SIZE,40); 
 
-
+  if(connected == 1)
+    {
+    wm.setConfigPortalTimeout(120);
+    wm.setConfigPortalBlocking(false);
+    wm.startConfigPortal(spiffs_AP_TIMEOUT);
+    }
 
   wm.setConfigPortalBlocking(false);
   wm.startWebPortal();
@@ -2006,6 +2016,7 @@ if (GPS.newNMEAreceived()) {
     ntpAlarmCounter = 0;//???????
     ntpFetchFlag = true;
     connected = true;
+
   }
   wm.process();  // do processing
 
@@ -2189,6 +2200,8 @@ if(spiffs_NTP_GPSENABLE[0] == '1')
     display.showNumberDecEx(analogVal,0,false,4,0);
     if(halfSec)
     {
+        wm.setConfigPortalBlocking(false);
+        wm.startWebPortal();
       memset(displayData, 0x00, 144 * 2);
       if(spiffs_COLON_BLINK[0] == '1')
       {
