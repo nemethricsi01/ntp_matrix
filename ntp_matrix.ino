@@ -965,6 +965,8 @@ uint8_t packetBuffer[NTP_PACKET_SIZE];
 uint32_t sendNTPrequest(uint8_t index) 
 {
   Serial << F("ntp_req") << endl;
+  showStatus(STATUS_RUNNING);
+  
   // we can send an empty packet with just the first byte header to the NTP server
   memset(&packetBuffer, 0, NTP_PACKET_SIZE);
   packetBuffer[0] = 0b11100011;
@@ -2066,6 +2068,7 @@ if (GPS.newNMEAreceived()) {
       {
         case 1:
           Serial << F("NTP beginPacket Failure!") << endl;
+          
           break;
         case 2:
           Serial << F("NTP Client endPacket Failure!") << endl;
@@ -2078,6 +2081,10 @@ if (GPS.newNMEAreceived()) {
           break;
         default:
           Serial << F("NTP Round-tript too long, aborting!") << endl;
+      }
+      if(result >0)
+      {
+        showStatus(STATUS_CONNERROR);
       }
       // the NTP fetch has failed, so start counting the failures
       if (ntpFailCounter++ == NTP_FAIL_COUNT) 
